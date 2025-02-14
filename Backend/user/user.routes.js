@@ -11,4 +11,9 @@ router.post('/register', [
     body('age').isNumeric().notEmpty().withMessage('Age is required'),
 ], userControl.registerUser);
 
+router.post('/login', [
+    body('email').isEmail().notEmpty().withMessage('Email is required'),
+    body('password').isString().notEmpty().withMessage('Password is required'),
+], userControl.loginUser);
+
 module.exports = router;
