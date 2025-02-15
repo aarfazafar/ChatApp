@@ -1,17 +1,47 @@
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Login from './Auth/Login'
-import SignIn from './Auth/SignIn';
+import { useEffect, useState } from 'react';
+import Loader from './Loader/Loader';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1600); 
+  }, []);
+
   return (
-    <div>
-      <Routes>
-        <Route path='/register' element={<Login/>}/>
-        <Route path='/signin' element={<SignIn/>}/>
-      </Routes>
+    <div className="bg-[var(--color-dark-primary)] min-h-screen"> {/* Ensure no white background */}
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div
+            key="loader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }} 
+            className="fixed inset-0 flex items-center justify-center bg-black" // Force background
+          >
+            <Loader />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <Routes>
+              <Route path="/" element={<Login />} />
+            </Routes>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
-  )
+  );
 }
 
 export default App;
