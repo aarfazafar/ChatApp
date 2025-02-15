@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userControl = require('./user.control');
 const {body} = require('express-validator');
+const authMiddleware = require('./user.middleware');
 
 router.post('/register', [
     body('name.first').isString().notEmpty().withMessage('First name is required'),
@@ -16,4 +17,9 @@ router.post('/login', [
     body('password').isString().notEmpty().withMessage('Password is required'),
 ], userControl.loginUser);
 
+router.get('/logout', authMiddleware.authUser, userControl.logoutUser);
+
+router.get('/profile', authMiddleware.authUser, userControl.getProfile);
+
 module.exports = router;
+
