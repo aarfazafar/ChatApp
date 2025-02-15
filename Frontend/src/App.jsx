@@ -1,15 +1,27 @@
 import './App.css'
+import Login from './Auth/Login'
 
 function App() {
 
   return (
     <>
-      Hello Aarfa
-      haa
-      tailwind add krdena
-      thk h
+      <div className='bg-green-300'>
+        <Login/>
+      </div>
     </>
   )
 }
 
 export default App
+
+// --color-green-50: oklch(0.982 0.018 155.826);
+// --color-green-100: oklch(0.962 0.044 156.743);
+// --color-green-200: oklch(0.925 0.084 155.995);
+// --color-green-300: oklch(0.871 0.15 154.449);
+// --color-green-400: oklch(0.792 0.209 151.711);
+// --color-green-500: oklch(0.723 0.219 149.579);
+// --color-green-600: oklch(0.627 0.194 149.214);
+// --color-green-700: oklch(0.527 0.154 150.069);
+// --color-green-800: oklch(0.448 0.119 151.328);
+// --color-green-900: oklch(0.393 0.095 152.535);
+// --color-green-950: oklch(0.266 0.065 152.934);
