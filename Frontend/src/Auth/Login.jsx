@@ -40,17 +40,11 @@ const Login = () => {
     };
 
 
-    const response = await axios.post(`${VITE_BASE_URL}/user/register`, newUser)
-
-    try{
-      const data = response.data
-      setUser(data.user)
-      console.log("User created ",data.user)
-      localStorage.setItem('token', data.token)
-      navigate('/')
-    } catch(err){
-      console.log(err.message)
-    }
+    const response = await axios.post(`${VITE_BASE_URL}/user/register`, newUser).then(response => console.log("User registered:", response.data))
+    .catch(error => {
+        console.error("Error:", error.response.data.message); 
+        alert(error.response.data.message);
+    });
 
     // setFormData({
     //     firstName: "",

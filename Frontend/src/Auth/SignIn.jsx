@@ -1,21 +1,39 @@
 import React, { useState } from "react";
 import { Ghost, EyeOff, Mail, Eye } from "lucide-react";
 import "./auth.css";
+
+import axios from 'axios'
 const SignIn = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  // const [formData, setFormData] = useState({
+  //   email: "",
+  //   password: "",
+  // });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [focusedField, setFocusedField] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
-  const handleSubmit = (e) => {
+  const VITE_BASE_URL =  "http://localhost:3000"
+
+  const handleSubmit =  async(e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    // console.log("Form submitted:", formData);
+
+    const existingUser = {
+      email: email,
+      password: password
+    }
+
+    // console.log("API URL:", `${VITE_BASE_URL}/user/login`);
+
+
+    const response = await axios.post(`${VITE_BASE_URL}/user/login`, existingUser)
+    response.then(response => console.log(response.data)).catch(
+      err => {
+        console.error("Error:", err.response.data.message); 
+        alert(err.response.data.message);
+      }
+    );
   };
 
   const handlePasswordShow = () => {
@@ -53,8 +71,8 @@ const SignIn = () => {
                   name="email"
                   className="input-field pl-10"
                   placeholder="your@email.com"
-                  value={formData.email}
-                  onChange={handleChange}
+                  value={email}
+                  onChange={(e)=> {setEmail(e.target.value)}}
                   onFocus={() => setFocusedField("email")}
                   onBlur={() => setFocusedField(null)}
                   required
@@ -92,8 +110,8 @@ const SignIn = () => {
                   name="password"
                   className="input-field pl-10"
                   placeholder="Whisper your secret key"
-                  value={formData.password}
-                  onChange={handleChange}
+                  value={password}
+                  onChange={(e)=> {setPassword(e.target.value)}}
                   onFocus={() => setFocusedField("password")}
                   onBlur={() => setFocusedField(null)}
                   required
