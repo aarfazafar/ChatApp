@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import Login from './Auth/Login'
+import Login from './Components/Auth/Login'
 import { useEffect, useState } from 'react';
-import Loader from './Loader/Loader';
+import Loader from './Components/Loader/Loader';
 import { motion, AnimatePresence } from 'framer-motion';
-import SignIn from './Auth/SignIn';
+import SignIn from './Components/Auth/SignIn';
 
 function App() {
   const [loading, setLoading] = useState(true);
