@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Loader from './Components/Loader/Loader';
 import { motion, AnimatePresence } from 'framer-motion';
 import SignIn from './Components/Auth/SignIn';
+import LandingPage from './Components/LandingPage/LandingPage';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -36,6 +37,7 @@ function App() {
             transition={{ duration: 0.8 }}
           >
             <Routes>
+              <Route path='/' element={<LandingPage/>}/>
               <Route path="/register" element={<Login />} />
               <Route path='/login' element={<SignIn/>}/>
             </Routes>

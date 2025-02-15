@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { motion, AnimatePresence } from "framer-motion";
-import '../LandingPage/LandingPage.css'
+
 const Loader = ({ onComplete }) => {
   const [count, setCount] = useState(0);
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -27,13 +27,13 @@ const Loader = ({ onComplete }) => {
     <AnimatePresence>
       {!loadingComplete && (
         <motion.div
-          className="vtFont flex flex-col items-center justify-center h-screen bg-[var(--color-dark-primary)] text-white fixed inset-0 z-50"
+          className="flex flex-col items-center justify-center h-screen bg-[var(--color-dark-primary)] text-white fixed inset-0 z-50"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
         >
           <motion.h1
-            className="vtFont text-6xl font-bold"
+            className="text-6xl font-bold"
             animate={{ opacity: [0.5, 1], scale: [0.9, 1] }}
             transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
           >
