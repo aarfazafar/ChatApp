@@ -1,18 +1,20 @@
-import './App.css'
-import Login from './Auth/Login'
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router";
+import Login from "./Auth/Login";
+import SignIn from "./Auth/SignIn";
 
 function App() {
-
   return (
-    <>
-      <div className='bg-green-300'>
-        <Login/>
-      </div>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="signin" element={<SignIn />} />
+        <Route path="signup" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
 
 // --color-green-50: oklch(0.982 0.018 155.826);
 // --color-green-100: oklch(0.962 0.044 156.743);
