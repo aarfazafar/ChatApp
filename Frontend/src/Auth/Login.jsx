@@ -44,15 +44,6 @@ const Login = () => {
         console.error("Error:", error.response.data.message); 
         alert(error.response.data.message);
     });
-
-    // setFormData({
-    //     firstName: "",
-    //     lastName: "",
-    //     email: "",
-    //     password: "",
-    //     age: "",
-      
-    // })
   };
 
 

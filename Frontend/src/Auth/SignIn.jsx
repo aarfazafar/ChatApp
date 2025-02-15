@@ -4,10 +4,6 @@ import "./auth.css";
 
 import axios from 'axios'
 const SignIn = () => {
-  // const [formData, setFormData] = useState({
-  //   email: "",
-  //   password: "",
-  // });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [focusedField, setFocusedField] = useState(null);
@@ -16,24 +12,19 @@ const SignIn = () => {
   const VITE_BASE_URL =  "http://localhost:3000"
 
   const handleSubmit =  async(e) => {
-    e.preventDefault();
-    // console.log("Form submitted:", formData);
-
+    e.preventDefault()
     const existingUser = {
       email: email,
       password: password
     }
 
-    // console.log("API URL:", `${VITE_BASE_URL}/user/login`);
-
-
-    const response = await axios.post(`${VITE_BASE_URL}/user/login`, existingUser)
-    response.then(response => console.log(response.data)).catch(
-      err => {
-        console.error("Error:", err.response.data.message); 
-        alert(err.response.data.message);
-      }
-    );
+    try {
+      const response = await axios.post(`${VITE_BASE_URL}/user/login`, existingUser);
+      console.log(response.data);
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || "Invalid Credentials";
+      console.error("Error:", errorMessage);
+    }
   };
 
   const handlePasswordShow = () => {
