@@ -17,7 +17,6 @@ const Login = () => {
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ age, setAge ] = useState()
-  const [ userData, setUserData ] = useState({})
 
   const [focusedField, setFocusedField] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
