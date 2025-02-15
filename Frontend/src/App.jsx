@@ -1,14 +1,15 @@
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Login from './Auth/Login'
 
 function App() {
 
   return (
-    <>
-      <div className='bg-green-300'>
-        <Login/>
-      </div>
-    </>
+    <div>
+      <Routes>
+        <Route path='/register' element={<Login/>}/>
+      </Routes>
+    </div>
   )
 }
 
