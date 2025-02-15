@@ -5,6 +5,8 @@ app.use(express.urlencoded({ extended: true }));
 
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
+const cors = require('cors');
+app.use(cors());
 
 const dotenv = require('dotenv');   
 dotenv.config();
@@ -18,10 +20,6 @@ connectToDB();
 
 app.get('/', (req, res) => {
     res.send('Hello');
-});
-
-app.listen(3000, () => {
-    console.log(`Listening on port ${port}`);
 });
 
 module.exports = app;

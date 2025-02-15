@@ -1,34 +1,69 @@
-import React, { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Ghost,
   EyeOff,
-  ScanLine,
-  Fingerprint,
   User,
   Mail,
   Calendar,
   Eye,
 } from "lucide-react";
 import "./auth.css";
+import { Link, useNavigate } from 'react-router-dom'
+import axios from 'axios';
+import UserContext, { UserDataContext } from "./userContext";
 const Login = () => {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    age: "",
-  });
+  const [ firstName, setFirstName ] = useState('')
+  const [ lastName, setLastName ] = useState('')
+  const [ email, setEmail ] = useState('')
+  const [ password, setPassword ] = useState('')
+  const [ age, setAge ] = useState()
+  const [ userData, setUserData ] = useState({})
+
   const [focusedField, setFocusedField] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+  const VITE_BASE_URL =  "http://localhost:3000"
+
+  const { user, setUser } = useContext(UserDataContext)
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newUser = {
+      name: {
+        first: firstName,
+        last: lastName
+      },
+      email: email,
+      password: password,
+      age: age
+    };
+
+
+    const response = await axios.post(`${VITE_BASE_URL}/user/register`, newUser)
+
+    try{
+      const data = response.data
+      setUser(data.user)
+      console.log("User created ",data.user)
+      localStorage.setItem('token', data.token)
+      navigate('/')
+    } catch(err){
+      console.log(err.message)
+    }
+
+    // setFormData({
+    //     firstName: "",
+    //     lastName: "",
+    //     email: "",
+    //     password: "",
+    //     age: "",
+      
+    // })
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-  };
+
+
 
   const handlePasswordShow = () => {
     setShowPassword((showPassword) => !showPassword);
@@ -43,7 +78,7 @@ const Login = () => {
           PHANTOM CHAT
         </h1>
         <p className="text-[var(--color-text-secondary)] text-center mb-8">
-          Enter if you dare
+          Speak, but remain unseen.🕵️‍♂️
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -68,8 +103,10 @@ const Login = () => {
                     name="firstName"
                     className="input-field pl-10"
                     placeholder="First"
-                    value={formData.firstName}
-                    onChange={handleChange}
+                    value={firstName}
+                    onChange={(e) => {
+                      setFirstName(e.target.value);
+                    }}
                     onFocus={() => setFocusedField("firstName")}
                     onBlur={() => setFocusedField(null)}
                     required
@@ -95,8 +132,10 @@ const Login = () => {
                     name="lastName"
                     className="input-field pl-10"
                     placeholder="Last"
-                    value={formData.lastName}
-                    onChange={handleChange}
+                    value={lastName}
+                    onChange={(e) => {
+                      setLastName(e.target.value);
+                    }}
                     onFocus={() => setFocusedField("lastName")}
                     onBlur={() => setFocusedField(null)}
                     required
@@ -121,9 +160,11 @@ const Login = () => {
                   id="email"
                   name="email"
                   className="input-field pl-10"
-                  placeholder="your@email.com"
-                  value={formData.email}
-                  onChange={handleChange}
+                  placeholder="Even ghosts need mail…"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
                   onFocus={() => setFocusedField("email")}
                   onBlur={() => setFocusedField(null)}
                   required
@@ -160,9 +201,11 @@ const Login = () => {
                   id="password"
                   name="password"
                   className="input-field pl-10"
-                  placeholder="your secret key"
-                  value={formData.password}
-                  onChange={handleChange}
+                  placeholder="A secret only the dark knows…"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
                   onFocus={() => setFocusedField("password")}
                   onBlur={() => setFocusedField(null)}
                   required
@@ -186,11 +229,13 @@ const Login = () => {
                   id="age"
                   name="age"
                   className="input-field pl-10"
-                  placeholder="21"
+                  placeholder="Why?? No one knows..😶‍🌫️"
                   min="0"
                   max="150"
-                  value={formData.age}
-                  onChange={handleChange}
+                  value={age}
+                  onChange={(e) => {
+                    setAge(e.target.value);
+                  }}
                   onFocus={() => setFocusedField("age")}
                   onBlur={() => setFocusedField(null)}
                   required
@@ -200,7 +245,7 @@ const Login = () => {
           </div>
           <div className="pt-4">
             <button type="submit" className="submit-button group">
-              <span className="group-hover:animate-pulse">Enter the Void</span>
+              <span className="group-hover:animate-pulse">Step into the shadows</span>
             </button>
           </div>
         </form>
