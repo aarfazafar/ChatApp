@@ -14,8 +14,7 @@ import {
   Shield,
 } from "lucide-react";
 import "./Home.css";
-// Mock data for chat rooms
-const mockRooms = [
+const demoData = [
   {
     id: 1,
     name: "Cyber Security",
@@ -77,7 +76,6 @@ function Home() {
         className={`w-full max-h-screen overflow-hidden lg:w-120 md:w-80 bg-[var(--color-dark-secondary)]/80 backdrop-blur-md border-r border-[#2a3347] flex flex-col 
                       ${showMobileChat ? "hidden md:flex" : "flex"}`}
       >
-        {/* User Info */}
         <div className="p-4 border-b border-[#2a3347]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -97,33 +95,31 @@ function Home() {
             </button>
           </div>
 
-          {/* Settings */}
           {showSettings && (
             <div className="mt-4 p-4 bg-[#0a0f1e] rounded-lg border border-[#2a3347] space-y-3">
-              <button className="w-full flex items-center gap-3 p-2 hover:bg-[#2a3347] rounded-lg transition-colors">
+              <button className="settings-button">
                 <Moon className="w-4 h-4 text-[#00ffff]" />
-                <span className="text-sm">Theme Settings</span>
+                <div className="text-sm">Theme Settings</div>
               </button>
-              <button className="w-full flex items-center gap-3 p-2 hover:bg-[#2a3347] rounded-lg transition-colors">
+              <button className="settings-button">
                 <Volume2 className="w-4 h-4 text-[#00ffff]" />
-                <span className="text-sm">Sound Settings</span>
+                <div className="text-sm">Sound Settings</div>
               </button>
-              <button className="w-full flex items-center gap-3 p-2 hover:bg-[#2a3347] rounded-lg transition-colors">
+              <button className="settings-button">
                 <Eye className="w-4 h-4 text-[#00ffff]" />
-                <span className="text-sm">Privacy Settings</span>
+                <div className="text-sm">Privacy Settings</div>
               </button>
-              <button className="w-full flex items-center gap-3 p-2 hover:bg-[#2a3347] rounded-lg transition-colors">
+              <button className="settings-button">
                 <Shield className="w-4 h-4 text-[#00ffff]" />
-                <span className="text-sm">Security Settings</span>
+                <div className="text-sm">Security Settings</div>
               </button>
             </div>
           )}
         </div>
 
-        {/* Search */}
         <div className="p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-tertiary)]" />
             <input
               type="text"
               placeholder="Search rooms..."
@@ -134,10 +130,9 @@ function Home() {
           </div>
         </div>
 
-        {/* Room List */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-2">
-            {mockRooms.map((room) => (
+            {demoData.map((room) => (
               <div
                 key={room.id}
                 className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
@@ -157,15 +152,15 @@ function Home() {
                     {room.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-xs px-2 py-1 rounded-full bg-[#2a3347] text-gray-300"
+                        className="text-xs px-2 pb-1.5 pt-1 rounded-full bg-[var(--color-input-bg)] text-[var(--color-text-tertiary)]"
                       >
                         #{tag}
                       </span>
                     ))}
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
                     <Clock className="w-3 h-3" />
-                    <span>{room.timeLeft}</span>
+                    <span className=" [var(--color-text-tertiary)]">{room.timeLeft}</span>
                   </div>
                 </div>
               </div>
@@ -173,9 +168,8 @@ function Home() {
           </div>
         </div>
 
-        {/* Create Room Button */}
         <div className="flex flex-col align-center justify-center p-4 border-t border-[var(--color-accent)]">
-            {/* <button type="submit" className="submit-button group">
+          {/* <button type="submit" className="submit-button group">
               <span className="group-hover:animate-pulse">Step into the shadows</span>
             </button> */}
           <button className="plus-button group-hover:animate-pulse  relative">
@@ -208,7 +202,7 @@ function Home() {
             <div className="text-center">
               <h2 className="text-2xl font-bold mb-4">{selectedRoom.name}</h2>
               <p className="text-gray-400 mb-6">
-                Room details and chat interface will appear here
+                chat area.....
               </p>
             </div>
           ) : (

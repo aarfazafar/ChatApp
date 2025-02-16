@@ -80,3 +80,6 @@
   @apply block text-sm font-medium mb-1 text-[var(--color-text-secondary)]
          transition-colors duration-300 uppercase tracking-wider;
 }
+.toggle-button {
+  @apply transition duration-600 ease-in-out hover:scale-[1.4] font-[VT323] text-lg
+}

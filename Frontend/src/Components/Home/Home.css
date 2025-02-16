@@ -16,6 +16,9 @@
          hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]
          active:scale-[0.98] uppercase tracking-wider;
 }
+.settings-button {
+  @apply w-full flex items-center justify-between gap-3 p-2 hover:bg-[#2a3347] rounded-lg transition-colors
+}
 ::-webkit-scrollbar {
   width: 6px;
 }

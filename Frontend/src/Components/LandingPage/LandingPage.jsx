@@ -1,10 +1,7 @@
 import React from 'react'
 import "./LandingPage.css"
 import { Ghost } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
 const LandingPage = () => {
-  const VITE_BASE_URL = "http://localhost:5173"
-  const navigate = useNavigate();
   return (
     <div className='vtFont flex'>
       <div className="left  w-[50%] h-[100vh]">
