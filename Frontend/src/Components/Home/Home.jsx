@@ -14,6 +14,7 @@ import {
   Shield,
 } from "lucide-react";
 import "./Home.css";
+import ChatRoom from "../../ChatRoom/ChatRoom";
 const demoData = [
   {
     id: 1,
@@ -139,10 +140,10 @@ function Home() {
                 onClick={() => handleRoomSelect(room)}
               >
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-medium group-hover:text-[var(--color-accent)] transition-colors">
+                  <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
                     {room.name}
                   </h3>
-                  <div className="flex items-center gap-1 text-sm text-gray-400">
+                  <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
                     <Users className="w-4 h-4" />
                     <span>{room.users}</span>
                   </div>
@@ -199,12 +200,13 @@ function Home() {
         {/* Chat Area */}
         <div className="flex-1 p-8 flex items-center justify-center">
           {selectedRoom ? (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-4">{selectedRoom.name}</h2>
-              <p className="text-gray-400 mb-6">
-                chat area.....
-              </p>
-            </div>
+            // <div className="text-center">
+            //   <h2 className="text-2xl font-bold mb-4">{selectedRoom.name}</h2>
+            //   <p className="text-gray-400 mb-6">
+            //     chat area.....
+            //   </p>
+            // </div>
+            <ChatRoom/>
           ) : (
             <div className="text-center space-y-4">
               <Ghost className="w-20 h-20 text-[var(--color-accent)] mx-auto mb-4" />
