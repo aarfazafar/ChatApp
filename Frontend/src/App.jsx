@@ -5,7 +5,8 @@ import Loader from './Components/Loader/Loader';
 import { motion, AnimatePresence } from 'framer-motion';
 import LandingPage from './Components/LandingPage/LandingPage';
 import Register from './Components/Auth/Register';
-
+import Home from './Components/Home/Home';
+import Chat from './Components/Chat'
 function App() {
   const [loading, setLoading] = useState(true);
 
@@ -14,7 +15,7 @@ function App() {
       setLoading(false);
     }, 1600); 
   }, []);
-
+  
   return (
     <div className="bg-[var(--color-dark-primary)] min-h-screen"> {/* Ensure no white background */}
       <AnimatePresence mode="wait">
@@ -38,6 +39,8 @@ function App() {
             <Routes>
               <Route path='/' element={<LandingPage/>}/>
               <Route path="/register" element={<Register />} />
+              <Route path="/home" element={<Home/>} />
+              <Route path="/chat" element={<Chat/>} />
             </Routes>
           </motion.div>
         )}

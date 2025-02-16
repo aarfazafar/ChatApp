@@ -143,8 +143,8 @@ const Register = () => {
               </div>
             </div>
           </div>
-          <button onClick={toggleLogin} className="w-full cursor-pointer uppercase font-bold  transition duration-600 ease-in-out hover:scale-[2]">New to the Jungle?? Click Me!!</button>
-          <div className="pt-4">
+          <button onClick={toggleLogin} className="w-full cursor-pointer uppercase toggle-button">New to the Jungle?? Click Me!!</button>
+          <div className="pt-2">
             <button type="submit" className="submit-button group">
               <span className="group-hover:animate-pulse">
                 Enter the PlayGround
@@ -335,8 +335,8 @@ const Register = () => {
                </div>
              </div>
            </div>
-           <button onClick={toggleLogin} className="w-full cursor-pointer font-bold transition duration-600 ease-in-out hover:scale-[2] font-[VT323]">Already a Ghost?? Click Me!!</button>
-           <div className="pt-4">
+           <button onClick={toggleLogin} className="w-full cursor-pointer toggle-button">Already a Ghost?? Click Me!!</button>
+           <div>
              <button type="submit" className="submit-button group">
                <span className="group-hover:animate-pulse">Step into the shadows</span>
              </button>
