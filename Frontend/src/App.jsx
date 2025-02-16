@@ -8,7 +8,7 @@ import Register from './Components/Auth/Register';
 import Home from './Components/Home/Home';
 import Chat from './Components/Chat'
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
