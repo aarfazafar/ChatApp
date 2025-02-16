@@ -1,11 +1,12 @@
 import { Route, Routes } from 'react-router-dom'
+import { useEffect, useState } from 'react';
 import './App.css'
 import Login from './Components/Auth/Login'
-import { useEffect, useState } from 'react';
 import Loader from './Components/Loader/Loader';
-import { motion, AnimatePresence } from 'framer-motion';
 import SignIn from './Components/Auth/SignIn';
 import LandingPage from './Components/LandingPage/LandingPage';
+import Home from './Components/Home/Home';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -40,6 +41,7 @@ function App() {
               <Route path='/' element={<LandingPage/>}/>
               <Route path="/register" element={<Login />} />
               <Route path='/login' element={<SignIn/>}/>
+              <Route path='/home' element={<Home/>}/>
             </Routes>
           </motion.div>
         )}

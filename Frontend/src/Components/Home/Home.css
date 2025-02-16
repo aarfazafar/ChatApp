@@ -1,0 +1,37 @@
+@import '../../index.css';
+.home-app {
+  background-color: var(--color-dark-primary);
+  color: var(--color-text-primary);
+  background-image:
+  radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+  linear-gradient(to bottom, #0d1117, #161b22);
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+.plus-button {
+  @apply w-full bg-transparent border-2 border-[var(--color-accent)] text-[var(--color-accent)] 
+         font-bold py-3 px-4 rounded-lg transition-all duration-300 
+         hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]
+         active:scale-[0.98] uppercase tracking-wider;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(42, 51, 71, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 255, 0.3);
+}
+.vtFont{
+  font-family: "VT323";
+}
