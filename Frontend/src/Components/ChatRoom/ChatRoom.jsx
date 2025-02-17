@@ -21,7 +21,7 @@ const ChatRoom = ({ id, name }) => {
     newSocket.on("received", (data) => {
       console.log("Received:", data);
       // AllMessages.push(data);
-      // setAllMessages((prev) => [...prev, data]);
+      setAllMessages((prev) => [...prev, data]);
       console.log(AllMessages)
     });
 
@@ -37,10 +37,11 @@ const ChatRoom = ({ id, name }) => {
   useEffect(() => {
     if (socket) {
       socket.emit("leave-room", id); 
+      setAllMessages([]);
       socket.emit("join-room", id); 
-      setAllMessages([]); 
     }
   }, [id, socket]);
+  
 
   useEffect(() => {
     if (chatEndRef.current) {
@@ -53,7 +54,7 @@ const ChatRoom = ({ id, name }) => {
     
     if (socket && message.trim() !== "") {
       const newMessage = { message, id, timestamp: new Date().toLocaleTimeString() };
-      setAllMessages((prev) => [...prev, newMessage])
+      // setAllMessages((prev) => [...prev, newMessage])
       socket.emit("message", newMessage);
       setMessage(""); 
     }
