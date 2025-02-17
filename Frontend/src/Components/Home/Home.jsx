@@ -54,18 +54,17 @@ const demoData = [
     users: 31,
     timeLeft: "45m",
   },
+  
 ];
 const randomName = generate({
   exactly: 3,
   wordsPerString: 1,
+  minLength: 7,
   separator: "_",
   formatter: (word, index) => {
-    if (index === 0) {
-      return word.toLowerCase();
-    }
     return word.charAt(0).toUpperCase() + word.slice(1);
   },
-}).join("_");
+}).join("");
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -101,9 +100,9 @@ function Home() {
         <div className="p-4 border-b border-[#2a3347]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Ghost className="w-8 h-8 text-[var(--color-accent)]" />
+              <Ghost className="w-8 h-8 text-[var(--color-accent)] transition ease-in-out hover:-translate-y-1" />
               <div>
-                <h2 className="font-bold">{randomUserName}</h2>
+                <h2 className="font-bold ">{randomUserName}</h2>
                 <p className="text-sm text-gray-400">
                   Lurking in the shadows...
                 </p>
@@ -212,10 +211,10 @@ function Home() {
             //     chat area.....
             //   </p>
             // </div>
-            <ChatRoom id={id} />
+            <ChatRoom id={id} name = {selectedRoom.name}/>
           ) : (
             <div className="text-center space-y-4">
-              <Ghost className="w-20 h-20 text-[var(--color-accent)] mx-auto mb-4" />
+              <Ghost className="w-20 h-20 text-[var(--color-accent)] mx-auto mb-4 motion-safe:animate-bounce" />
               <h2 className="vtFont text-5xl font-[var(--font-vt)]-900 text-[var(--color-accent)]">
                 Welcome to the Void
               </h2>

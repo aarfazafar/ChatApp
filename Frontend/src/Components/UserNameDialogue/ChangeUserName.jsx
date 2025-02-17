@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import './changeuser.css'
 const ChangeUserName = ({ randomName, isOpen, onClose }) => {
 
- 
   const [username, setUsername] = useState(randomName);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -54,6 +54,12 @@ const ChangeUserName = ({ randomName, isOpen, onClose }) => {
       </div>
     </div>
   );
+};
+
+ChangeUserName.propTypes = {
+  randomName: PropTypes.string.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default ChangeUserName;
