@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Ghost,
   Users,
@@ -14,7 +14,10 @@ import {
   Shield,
 } from "lucide-react";
 import "./Home.css";
-import ChatRoom from "../../ChatRoom/ChatRoom";
+import ChatRoom from "../ChatRoom/ChatRoom";
+import Setting from "../Settings/Setting";
+import { generate } from "random-words";
+ 
 const demoData = [
   {
     id: 1,
@@ -52,22 +55,40 @@ const demoData = [
     timeLeft: "45m",
   },
 ];
+const randomName = generate({
+  exactly: 3,
+  wordsPerString: 1,
+  separator: "_",
+  formatter: (word, index) => {
+    if (index === 0) {
+      return word.toLowerCase();
+    }
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  },
+}).join("_");
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(false);
-
+  const [id, setId] = useState(0);
+  const [randomUserName, setRandomUser] = useState(randomName);
+  console.log("Rendering Home with id:", id);
+  
   const handleRoomSelect = (room) => {
     setSelectedRoom(room);
     setShowMobileChat(true);
+    setId(room.id);
   };
 
+  
   const handleBackToRooms = () => {
     setShowMobileChat(false);
+    setId(0);
   };
 
+  // useEffect(()=>{}, [randomUserName])
   //[#141b2d]/80
   //bg-[var(--color-dark-secondary)]
   return (
@@ -82,7 +103,7 @@ function Home() {
             <div className="flex items-center gap-3">
               <Ghost className="w-8 h-8 text-[var(--color-accent)]" />
               <div>
-                <h2 className="font-bold">PHANTOM#4269</h2>
+                <h2 className="font-bold">{randomUserName}</h2>
                 <p className="text-sm text-gray-400">
                   Lurking in the shadows...
                 </p>
@@ -97,24 +118,7 @@ function Home() {
           </div>
 
           {showSettings && (
-            <div className="mt-4 p-4 bg-[#0a0f1e] rounded-lg border border-[#2a3347] space-y-3">
-              <button className="settings-button">
-                <Moon className="w-4 h-4 text-[#00ffff]" />
-                <div className="text-sm">Theme Settings</div>
-              </button>
-              <button className="settings-button">
-                <Volume2 className="w-4 h-4 text-[#00ffff]" />
-                <div className="text-sm">Sound Settings</div>
-              </button>
-              <button className="settings-button">
-                <Eye className="w-4 h-4 text-[#00ffff]" />
-                <div className="text-sm">Privacy Settings</div>
-              </button>
-              <button className="settings-button">
-                <Shield className="w-4 h-4 text-[#00ffff]" />
-                <div className="text-sm">Security Settings</div>
-              </button>
-            </div>
+              <Setting randomName={randomName}/>
           )}
         </div>
 
@@ -161,7 +165,9 @@ function Home() {
                   </div>
                   <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
                     <Clock className="w-3 h-3" />
-                    <span className=" [var(--color-text-tertiary)]">{room.timeLeft}</span>
+                    <span className=" [var(--color-text-tertiary)]">
+                      {room.timeLeft}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -206,7 +212,7 @@ function Home() {
             //     chat area.....
             //   </p>
             // </div>
-            <ChatRoom/>
+            <ChatRoom id={id} />
           ) : (
             <div className="text-center space-y-4">
               <Ghost className="w-20 h-20 text-[var(--color-accent)] mx-auto mb-4" />

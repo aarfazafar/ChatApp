@@ -1,0 +1,7 @@
+@import "tailwindcss";
+.settings-icons{
+  @apply w-4 h-4 text-[var(--color-accent)]
+}
+.settings-button {
+  @apply w-full flex items-center justify-between gap-3 p-2 hover:bg-[var(--color-hover-bg)] rounded-lg transition-colors
+}

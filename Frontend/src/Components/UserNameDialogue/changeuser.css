@@ -1,0 +1,8 @@
+@import 'tailwindcss';
+
+.submit-button {
+  @apply w-full bg-transparent border-2 border-[var(--color-accent)] text-[var(--color-accent)] 
+         font-bold py-3 px-4 rounded-lg transition-all duration-300 
+         hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]
+         active:scale-[0.98] uppercase tracking-wider;
+}

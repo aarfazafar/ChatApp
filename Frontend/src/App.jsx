@@ -7,6 +7,7 @@ import LandingPage from './Components/LandingPage/LandingPage';
 import Register from './Components/Auth/Register';
 import Home from './Components/Home/Home';
 import Chat from './Components/Chat'
+import ChatRoom from './Components/ChatRoom/ChatRoom';
 function App() {
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +41,8 @@ function App() {
               <Route path='/' element={<LandingPage/>}/>
               <Route path="/register" element={<Register />} />
               <Route path="/home" element={<Home/>} />
-              <Route path="/chat" element={<Chat/>} />
+              {/* <Route path="/chat" element={<Chat/>} /> */}
+              <Route path="/chatroom" element={<ChatRoom/>} />
             </Routes>
           </motion.div>
         )}
