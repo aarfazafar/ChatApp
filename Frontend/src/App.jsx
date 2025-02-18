@@ -6,10 +6,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import LandingPage from './Components/LandingPage/LandingPage';
 import Register from './Components/Auth/Register';
 import Home from './Components/Home/Home';
-import Chat from './Components/Chat'
 import ChatRoom from './Components/ChatRoom/ChatRoom';
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {

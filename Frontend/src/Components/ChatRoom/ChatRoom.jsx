@@ -1,8 +1,7 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { io } from "socket.io-client";
 import { SendHorizonal } from "lucide-react";
-import axios from "axios";
 
 const ChatRoom = ({ id, name }) => {
   const VITE_BASE_URL = "http://localhost:3000";

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Ghost,
   EyeOff,
@@ -37,7 +37,7 @@ const Register = () => {
       password: password, 
       age: age
     };
-    const response = await axios.post(`${VITE_BASE_URL}/user/register`, newUser).then(response => console.log("User registered:", response.data))
+    await axios.post(`${VITE_BASE_URL}/user/register`, newUser).then(response => console.log("User registered:", response.data))
     .catch(error => {
         console.error("Error:", error.response.data.message); 
         alert(error.response.data.message);

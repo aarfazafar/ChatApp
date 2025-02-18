@@ -5,13 +5,8 @@ import {
   Clock,
   Plus,
   Search,
-  Sparkles,
   Settings,
   ArrowLeft,
-  Moon,
-  Volume2,
-  Eye,
-  Shield,
 } from "lucide-react";
 import "./Home.css";
 import ChatRoom from "../ChatRoom/ChatRoom";
@@ -23,7 +18,7 @@ const randomName = generate({
   wordsPerString: 1,
   minLength: 7,
   separator: "_",
-  formatter: (word, index) => {
+  formatter: (word) => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   },
 }).join("");
