@@ -112,7 +112,7 @@ function Home() {
               onClick={() => setShowSettings(!showSettings)}
               className="p-2 hover:bg-[#2a3347] rounded-lg transition-colors"
             >
-              <Settings className="w-5 h-5 text-[var(--color-accent)]" />
+              <Settings className="w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 hover:rotate-90" />
             </button>
           </div>
 

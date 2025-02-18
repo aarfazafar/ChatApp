@@ -65,8 +65,8 @@ const ChatRoom = ({ id, name }) => {
       <div className="text-white overflow-y-auto h-[80vh] flex flex-col-reverse">
         <div ref={chatEndRef} />
         {AllMessages.slice().reverse().map((m, i) => (
-          <div key={i} className="h-[4vh] w-fit bg-[#1e1e1e] rounded-sm pl-4 pr-4 flex items-end mb-3">
-            <span>{m.message}</span>
+          <div key={i} className="h-[4vh] w-fit bg-[#1c2530] rounded-sm pl-2 pr-4 flex items-end mb-3">
+            <span className="mb-1">{m.message}</span>
             <span className="text-gray-500 text-xs ml-3 ">{m.timestamp}</span>
           </div>
         ))}
@@ -93,6 +93,7 @@ const ChatRoom = ({ id, name }) => {
     </div>
   );
 };
+
 ChatRoom.propTypes = {
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired
