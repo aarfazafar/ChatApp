@@ -6,12 +6,13 @@ const messageSchema = new mongoose.Schema({
         required: true
     },
     sentBy: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "user",
         required: true
     },
     room: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'chatroom',
         required: true
     },
     sentAt: {

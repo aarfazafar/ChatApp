@@ -15,6 +15,14 @@ const port = process.env.PORT || 3000;
 const userRoute = require('./user/user.routes');
 app.use('/user', userRoute);
 
+//chat and message routes
+const chatroomRoutes = require("./message/chatroom.routes");
+const messageRoutes = require("./message/message.routes");
+
+app.use("/chatrooms", chatroomRoutes);
+app.use("/messages", messageRoutes);
+
+
 const connectToDB = require('./db');
 connectToDB();
 

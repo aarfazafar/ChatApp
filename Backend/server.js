@@ -26,12 +26,12 @@ io.on("connection", (socket) => {
     console.log("User disconnected", socket.id);
   });
 
-  socket.on("message", ({ message, id }) => {
-    console.log(message, id);
+  socket.on("message", ({ message, id, timestamp }) => {
+    console.log(`Message received in room ${id}: ${message}`);
     if (id) {
-      io.to(id).emit("received", message);
+      io.to(id).emit("received", { message, id, timestamp}); 
     } else {
-      io.emit("received", message);
+      io.emit("received", {message});
     }
   });
 
@@ -49,3 +49,5 @@ io.on("connection", (socket) => {
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
+
+
