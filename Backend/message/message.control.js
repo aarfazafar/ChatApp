@@ -2,9 +2,7 @@ const messageModel = require("./message.model");
 const chatroomModel = require("./chatroom.model");
 
 module.exports.sendMessage = async (req, res) => {
-  const { text, room } = req.body;
-  const senderId = req.user._id;
-
+  const { text, sentBy, room, sentAt } = req.body;
   try {
     const chatroom = await chatroomModel.findById(room);
     if (!chatroom) {
@@ -13,8 +11,9 @@ module.exports.sendMessage = async (req, res) => {
 
     const message = new messageModel({
       text: text,
-      sentBy: senderId,
+      sentBy: sentBy,
       room: room,
+      sentAt: sentAt
     });
 
     await message.save();

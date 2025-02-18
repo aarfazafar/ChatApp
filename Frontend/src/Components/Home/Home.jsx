@@ -17,45 +17,7 @@ import "./Home.css";
 import ChatRoom from "../ChatRoom/ChatRoom";
 import Setting from "../Settings/Setting";
 import { generate } from "random-words";
- 
-const demoData = [
-  {
-    id: 1,
-    name: "Cyber Security",
-    tags: ["tech", "security"],
-    users: 42,
-    timeLeft: "2h",
-  },
-  {
-    id: 2,
-    name: "Philosophy Night",
-    tags: ["deep-thoughts"],
-    users: 28,
-    timeLeft: "1h",
-  },
-  {
-    id: 3,
-    name: "Music Producers",
-    tags: ["music", "art"],
-    users: 15,
-    timeLeft: "30m",
-  },
-  {
-    id: 4,
-    name: "Conspiracy Theories",
-    tags: ["mystery"],
-    users: 56,
-    timeLeft: "3h",
-  },
-  {
-    id: 5,
-    name: "Code Warriors",
-    tags: ["programming"],
-    users: 31,
-    timeLeft: "45m",
-  },
-  
-];
+import axios from "axios";
 const randomName = generate({
   exactly: 3,
   wordsPerString: 1,
@@ -67,24 +29,38 @@ const randomName = generate({
 }).join("");
 
 function Home() {
+  const VITE_BASE_URL = "http://localhost:3000";
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(false);
-  const [id, setId] = useState(0);
+  const [id, setId] = useState("");
+  const [rooms, setRooms] = useState([]);
   const [randomUserName, setRandomUser] = useState(randomName);
   console.log("Rendering Home with id:", id);
   
+  useEffect(() => {
+    const allRooms = async () => {
+      try {
+        const data = await axios.get(`${VITE_BASE_URL}/chatrooms/allRooms`);
+        console.log(data);
+        setRooms(data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    allRooms();
+  }, [])
   const handleRoomSelect = (room) => {
     setSelectedRoom(room);
     setShowMobileChat(true);
-    setId(room.id);
+    setId(room._id);
   };
 
   
   const handleBackToRooms = () => {
     setShowMobileChat(false);
-    setId(0);
+    setId("");
   };
 
   // useEffect(()=>{}, [randomUserName])
@@ -136,9 +112,9 @@ function Home() {
 
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-2">
-            {demoData.map((room) => (
+            {rooms.map((room) => (
               <div
-                key={room.id}
+                key={room._id}
                 className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
                 onClick={() => handleRoomSelect(room)}
               >
@@ -148,19 +124,17 @@ function Home() {
                   </h3>
                   <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
                     <Users className="w-4 h-4" />
-                    <span>{room.users}</span>
+                    <span>{room.members.length}</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex gap-1 flex-wrap">
-                    {room.tags.map((tag) => (
+                <div className="flex gap-1 flex-wrap">
                       <span
-                        key={tag}
+                        key={"hello"}
                         className="text-xs px-2 pb-1.5 pt-1 rounded-full bg-[var(--color-input-bg)] text-[var(--color-text-tertiary)]"
                       >
-                        #{tag}
+                        #{"hello"}
                       </span>
-                    ))}
                   </div>
                   <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
                     <Clock className="w-3 h-3" />

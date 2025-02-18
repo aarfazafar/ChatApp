@@ -6,17 +6,17 @@ const messageSchema = new mongoose.Schema({
         required: true
     },
     sentBy: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "user",
         required: true
     },
     room: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'chatroom',
         required: true
     },
     sentAt: {
-        type: Date,
+        type: String,
         default: Date.now,
         required: true
     }

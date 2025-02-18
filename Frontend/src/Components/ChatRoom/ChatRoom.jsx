@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { io } from "socket.io-client";
 import { SendHorizonal } from "lucide-react";
+import axios from "axios";
 
 const ChatRoom = ({ id, name }) => {
   const VITE_BASE_URL = "http://localhost:3000";
   const [socket, setSocket] = useState(null);
   const [message, setMessage] = useState("");
+  const [previousMessages, setPreviousMessages] = useState([]);
   const [AllMessages, setAllMessages] = useState([]);
   const chatEndRef = React.createRef();
 
@@ -18,11 +20,14 @@ const ChatRoom = ({ id, name }) => {
       console.log("Connected:", newSocket.id);
     });
 
+    newSocket.on("previous-messages", (data) => {
+      setPreviousMessages(data);
+    })
     newSocket.on("received", (data) => {
       console.log("Received:", data);
       // AllMessages.push(data);
-      setAllMessages((prev) => [...prev, data]);
-      console.log(AllMessages)
+      setPreviousMessages((prev) => [...prev, data]);
+      // console.log(AllMessages)
     });
 
     newSocket.on("welcome", (data) => {
@@ -37,11 +42,10 @@ const ChatRoom = ({ id, name }) => {
   useEffect(() => {
     if (socket) {
       socket.emit("leave-room", id); 
-      setAllMessages([]);
       socket.emit("join-room", id); 
+      setAllMessages([]); // Clear messages when switching rooms
     }
   }, [id, socket]);
-  
 
   useEffect(() => {
     if (chatEndRef.current) {
@@ -53,8 +57,7 @@ const ChatRoom = ({ id, name }) => {
     e.preventDefault();
     
     if (socket && message.trim() !== "") {
-      const newMessage = { message, id, timestamp: new Date().toLocaleTimeString() };
-      // setAllMessages((prev) => [...prev, newMessage])
+      const newMessage = { message, sentBy: "hello", id, timestamp: new Date().toLocaleTimeString() };
       socket.emit("message", newMessage);
       setMessage(""); 
     }
@@ -65,10 +68,10 @@ const ChatRoom = ({ id, name }) => {
       <h1 className="text-4xl text-white font-[VT323] uppercase mb-8">{name}</h1>
       <div className="text-white overflow-y-auto h-[80vh] flex flex-col-reverse">
         <div ref={chatEndRef} />
-        {AllMessages.slice().reverse().map((m, i) => (
+        {previousMessages.slice().reverse().map((m, i) => (
           <div key={i} className="h-[4vh] w-fit bg-[#1c2530] rounded-sm pl-2 pr-4 flex items-end mb-3">
-            <span className="mb-1">{m.message}</span>
-            <span className="text-gray-500 text-xs ml-3 ">{m.timestamp}</span>
+            <span className="mb-1">{m.text}</span> 
+            <span className="text-gray-500 text-xs ml-3 ">{m.sentAt}</span>
           </div>
         ))}
       </div>

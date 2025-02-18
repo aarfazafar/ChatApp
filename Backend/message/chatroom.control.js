@@ -41,3 +41,13 @@ module.exports.joinChatroom = async (req, res) => {
     res.status(500).json({ error: "Error joining chatroom" });
   }
 };
+
+module.exports.getRooms = async (req, res) => {
+  try {
+    const rooms = await chatroomModel.find();
+    res.json(rooms);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({error: "Cant get rooms"})
+  }
+}

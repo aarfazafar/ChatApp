@@ -4,6 +4,7 @@ const { Server } = require("socket.io");
 const { createServer } = require("http");
 
 const cors = require("cors");
+const messageModel = require("./message/message.model");
 app.use(cors());
 
 const server = createServer(app);
@@ -26,20 +27,37 @@ io.on("connection", (socket) => {
     console.log("User disconnected", socket.id);
   });
 
-  socket.on("message", ({ message, id, timestamp }) => {
+  socket.on("message", async ({ message, sentBy, id, timestamp }) => {
+    if (!id || !message || !sentBy) {
+      console.log({id, message, sentBy});
+      console.error("Missing required fields: room, message, sentBy");
+      return;
+    }
+
+    const newMessage = new messageModel({
+      text: message,
+      sentBy: sentBy,
+      room: id,
+      sentAt: timestamp
+    })
+    await newMessage.save();
     console.log(`Message received in room ${id}: ${message}`);
     if (id) {
-      io.to(id).emit("received", { message, id, timestamp}); 
+      io.to(id).emit("received", newMessage); 
     } else {
-      io.emit("received", {message});
+      io.emit("received", newMessage);
     }
   });
 
-  socket.on("join-room", (roomID) => {
+  socket.on("join-room", async (roomID) => {
     socket.join(roomID);
     console.log(`User ${socket.id} joined room: ${roomID}`);
-    socket.to(roomID).emit("welcome", `User ${socket.id} joined the room`);
+
+    const messages = await messageModel.find({ room: roomID }).sort("sentAt");
+    socket.emit("previous-messages", messages);
+    socket.to(roomID).emit("Welcome", `User ${socket.id} joined the room`);
   });
+
   socket.on("leave-room", (roomId) => {
     socket.leave(roomId);
     console.log(`User ${socket.id} left room ${roomId}`);

@@ -14,4 +14,6 @@ router.post('/join', [
     body('roomId').isString().notEmpty().withMessage('Room ID is required'),
 ], chatroomControl.joinChatroom);
 
+router.get('/allRooms', chatroomControl.getRooms);
+
 module.exports = router;

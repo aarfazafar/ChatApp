@@ -9,8 +9,10 @@ import {
 } from "lucide-react";
 import "./auth.css";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navigate = useNavigate();
   const [ firstName, setFirstName ] = useState('')
   const [ lastName, setLastName ] = useState('')
   const [ email, setEmail ] = useState('')
@@ -51,6 +53,9 @@ const Register = () => {
 
     try {
       const response = await axios.post(`${VITE_BASE_URL}/user/login`, existingUser);
+      if(response.status == 200){
+        navigate("/home");
+      }
       console.log(response.data);
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Invalid Credentials";
