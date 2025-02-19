@@ -14,16 +14,6 @@ import Setting from "../Settings/Setting";
 import { generate } from "random-words";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-const randomName = generate({
-  exactly: 3,
-  wordsPerString: 1,
-  minLength: 7,
-  separator: "_",
-  formatter: (word) => {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  },
-}).join("");
-
 function Home() {
   const [token, setToken] = useState("");
   const location = useLocation();
@@ -34,16 +24,40 @@ function Home() {
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [id, setId] = useState("");
   const [rooms, setRooms] = useState([]);
-  const [randomUserName, setRandomUser] = useState(randomName);
   const navigate = useNavigate();
-  console.log("Rendering Home with id:", id);
-  
+  const [activeTab, setActiveTab] = useState("all");
+  // console.log("Rendering Home with id:", id);
+  const [user, setUser] = useState({});
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    setToken(params.get("token"));
-  }, [location]);
+      const storedToken = localStorage.getItem("authToken");
+      if (storedToken) {
+          setToken(storedToken);
+      }
+  }, []);
 
-  console.log(token);
+  useEffect(() => {
+      if (token) {
+          getUser();
+      }
+  }, [token]);
+
+  async function getUser() {
+      try {
+          if (!token) return; 
+          const res = await axios.get(`${VITE_BASE_URL}/user/profile`, {
+              headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+              },
+          });
+          setUser(res.data); 
+          console.log("User fetched:", res.data);
+          // console.log(rooms);
+      } catch (error) {
+          console.log("Error fetching user:", error);
+      }
+  }
+
   useEffect(() => {
     const allRooms = async () => {
       try {
@@ -62,15 +76,23 @@ function Home() {
     setId(room._id);
   };
 
-  
+  const myRooms = rooms.filter((room) => room.members.includes(user?._id));
+  const displayRooms = activeTab === "all" ? rooms : myRooms;
   const handleBackToRooms = () => {
     setShowMobileChat(false);
     setId("");
   };
-
-  // useEffect(()=>{}, [randomUserName])
-  //[#141b2d]/80
-  //bg-[var(--color-dark-secondary)]
+  const [randomUserName, setRandomUser] = useState(() => {
+    return generate({
+      exactly: 3,
+      wordsPerString: 1,
+      minLength: 7,
+      separator: "_",
+      formatter: (word) => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      },
+    }).join("");
+  });
   return (
     <div className="home-app min-h-screen bg-[#0a0f1e] text-gray-100 flex">
       {/* Sidebar*/}
@@ -83,7 +105,7 @@ function Home() {
             <div className="flex items-center gap-3">
               <Ghost className="w-8 h-8 text-[var(--color-accent)] transition ease-in-out hover:-translate-y-1" />
               <div>
-                <h2 className="font-bold ">{randomUserName}</h2>
+                <h2 className="font-bold ">{user.username}</h2>
                 <p className="text-sm text-gray-400">
                   Lurking in the shadows...
                 </p>
@@ -98,7 +120,7 @@ function Home() {
           </div>
 
           {showSettings && (
-              <Setting randomName={randomName}/>
+              <Setting randomName={randomUserName} token={token}/>
           )}
         </div>
 
@@ -114,41 +136,46 @@ function Home() {
             />
           </div>
         </div>
-
+        <div className="flex">
+          <button onClick={() => setActiveTab("all")} className={`!w-[50%] cursor-pointer py-2 rounded-lg ${activeTab === "all" ? "bg-[var(--color-hover-bg)]" : "bg-[#161b21]"}`}>All Rooms</button>
+          <button onClick={() => setActiveTab("my")} className={`!w-[50%] cursor-pointer py-2 rounded-lg ${activeTab === "my" ? "bg-[var(--color-hover-bg)]" : "bg-[#161b21]"}`}>My Rooms</button>
+        </div>
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-2">
-            {rooms.map((room) => (
+            {displayRooms.map((room) => (
               <div
-                key={room._id}
-                className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
-                onClick={() => handleRoomSelect(room)}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
-                    {room.name}
-                  </h3>
-                  <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
-                    <Users className="w-4 h-4" />
-                    <span>{room.members.length}</span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                <div className="flex gap-1 flex-wrap">
-                      <span
-                        key={"hello"}
-                        className="text-xs px-2 pb-1.5 pt-1 rounded-full bg-[var(--color-input-bg)] text-[var(--color-text-tertiary)]"
-                      >
-                        #{"hello"}
-                      </span>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
-                    <Clock className="w-3 h-3" />
-                    <span className=" [var(--color-text-tertiary)]">
-                      {room.timeLeft}
-                    </span>
-                  </div>
+              key={room._id}
+              className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
+              onClick={() => handleRoomSelect(room)}
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
+                  {room.name}
+                </h3>
+                <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
+                  <Users className="w-4 h-4" />
+                  <span>{room.members.length}</span>
                 </div>
               </div>
+              <div className="flex items-center justify-between">
+              <div className="flex gap-1 flex-wrap">
+                    {room.tags.map((tag, index) => (
+                      <span
+                      key={index}
+                      className="text-xs px-2 pb-1.5 pt-1 rounded-full bg-[var(--color-input-bg)] text-[var(--color-text-tertiary)]"
+                    >
+                      {`#${tag}`}
+                    </span>
+                    ))}
+                </div>
+                <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
+                  <Clock className="w-3 h-3" />
+                  <span className=" [var(--color-text-tertiary)]">
+                    {room.timeLeft}
+                  </span>
+                </div>
+              </div>
+            </div>
             ))}
           </div>
         </div>

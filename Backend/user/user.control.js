@@ -2,13 +2,22 @@ const userService = require('./user.service');
 const { validationResult } = require('express-validator');
 const userModel = require('./user.model');
 const tokenBlacklistModel = require('./tokenBlacklist.model');
+const { generate } = require ("random-words");
 
 module.exports.registerUser = async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-
+    const randomName = generate({
+        exactly: 3,
+        wordsPerString: 1,
+        minLength: 7,
+        separator: "_",
+        formatter: (word) => {
+          return word.charAt(0).toUpperCase() + word.slice(1);
+        },
+      }).join("");
     const {name, email, password, age} = req.body;
 
     const isUserAlready = await userModel.findOne({ email });
@@ -22,6 +31,7 @@ module.exports.registerUser = async (req, res) => {
     const user = await userService.createdUser({
         first: name.first,
         last: name.last,
+        username: randomName,
         email,
         password: hashedPassword,
         age,
@@ -58,7 +68,7 @@ module.exports.loginUser = async (req, res) => {
 };
 
 module.exports.logoutUser = async (req, res) => {
-    const token = req.cookies.token || req.header.authorization;
+    const token = req.cookies.token || req.header("Authorization")?.split(" ")[1];
     if(!token) {
         return res.status(401).json({ message: 'Unauthorized Access' });
     }

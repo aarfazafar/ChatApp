@@ -37,10 +37,9 @@ const Register = () => {
     };
     await axios.post(`${VITE_BASE_URL}/user/register`, newUser).then(response => {
       console.log("User registered:", response.data);
-
       const token = response.data.token;
             if (token) {
-                localStorage.setItem("authToken", token);
+              localStorage.setItem("authToken", token);
                 // navigate(`/home`);
             }
     })

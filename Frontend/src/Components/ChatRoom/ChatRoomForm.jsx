@@ -35,7 +35,7 @@ export const ChatRoomForm = () => {
         console.error("Error:", error);
         // alert(error.response.data.message);
       });
-    // navigate("/home")
+    navigate("/home")
     setRoomName("");
   };
   const addTagHandler = (e) => {
