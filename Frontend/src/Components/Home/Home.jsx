@@ -13,6 +13,7 @@ import ChatRoom from "../ChatRoom/ChatRoom";
 import Setting from "../Settings/Setting";
 import { generate } from "random-words";
 import axios from "axios";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 const randomName = generate({
   exactly: 3,
   wordsPerString: 1,
@@ -24,6 +25,8 @@ const randomName = generate({
 }).join("");
 
 function Home() {
+  const [token, setToken] = useState("");
+  const location = useLocation();
   const VITE_BASE_URL = "http://localhost:3000";
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -32,8 +35,15 @@ function Home() {
   const [id, setId] = useState("");
   const [rooms, setRooms] = useState([]);
   const [randomUserName, setRandomUser] = useState(randomName);
+  const navigate = useNavigate();
   console.log("Rendering Home with id:", id);
   
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    setToken(params.get("token"));
+  }, [location]);
+
+  console.log(token);
   useEffect(() => {
     const allRooms = async () => {
       try {
@@ -147,7 +157,11 @@ function Home() {
           {/* <button type="submit" className="submit-button group">
               <span className="group-hover:animate-pulse">Step into the shadows</span>
             </button> */}
-          <button className="plus-button group-hover:animate-pulse  relative">
+          <button
+            onClick={() => {
+              navigate("/join")
+            }}
+            className="plus-button group-hover:animate-pulse  relative">
             <Plus className="w-4 h-4 absolute top-4 left-35" />
             <div>Create Room</div>
           </button>

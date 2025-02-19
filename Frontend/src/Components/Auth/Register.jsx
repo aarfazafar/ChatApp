@@ -18,13 +18,11 @@ const Register = () => {
   const [ email, setEmail ] = useState('')
   const [ password, setPassword ] = useState('')
   const [ age, setAge ] = useState()
-
   const [focusedField, setFocusedField] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const toggleLogin = () => setIsLogin((value) => !value)
-
-  const VITE_BASE_URL =  "http://localhost:3000"
+  const VITE_BASE_URL =  "http://localhost:3000";
 
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
@@ -54,9 +52,13 @@ const Register = () => {
     try {
       const response = await axios.post(`${VITE_BASE_URL}/user/login`, existingUser);
       if(response.status == 200){
-        navigate("/home");
+        console.log(response);
+        const token = response.data.token;
+        if(token !== null){
+          navigate(`/home?token=${token}`);
+        }
       }
-      console.log(response.data);
+      // console.log(response.data);
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Invalid Credentials";
       console.error("Error:", errorMessage);
