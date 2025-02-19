@@ -35,7 +35,14 @@ const Register = () => {
       password: password, 
       age: age
     };
-    await axios.post(`${VITE_BASE_URL}/user/register`, newUser).then(response => console.log("User registered:", response.data))
+    await axios.post(`${VITE_BASE_URL}/user/register`, newUser).then(response => {
+      console.log("User registered:", response.data);
+      const token = response.data.token;
+            if (token) {
+                localStorage.setItem("authToken", token);
+                // navigate(`/home`);
+            }
+    })
     .catch(error => {
         console.error("Error:", error.response.data.message); 
         alert(error.response.data.message);
