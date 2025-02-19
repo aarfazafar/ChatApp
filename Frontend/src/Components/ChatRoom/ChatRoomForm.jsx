@@ -17,7 +17,8 @@ export const ChatRoomForm = () => {
   const addRoomHandler = async (e) => {
     e.preventDefault();
     console.log(roomName);
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
+    console.log(token)
     await axios
       .post(
         `${VITE_BASE_URL}/chatrooms/create`,
@@ -71,7 +72,7 @@ export const ChatRoomForm = () => {
           <div className="text-4xl text-white font-[VT323] uppercase pb-1">
             Birth a Shadow Society
           </div>
-          <form className="h-[40vh] w-[30vw] border-2 border-accent rounded-lg flex flex-col justify-center items-center">
+          <form className="h-[40vh] w-[30vw] border-2 border-accent rounded-lg flex flex-col justify-center items-center max-md:w-[60vw] max-lg:w-[50vw]">
             <div className="flex-col justify-center items-center w-full text-center">
               <input
                 value={roomName}

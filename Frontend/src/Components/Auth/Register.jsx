@@ -37,6 +37,7 @@ const Register = () => {
     };
     await axios.post(`${VITE_BASE_URL}/user/register`, newUser).then(response => {
       console.log("User registered:", response.data);
+
       const token = response.data.token;
             if (token) {
                 localStorage.setItem("authToken", token);
@@ -59,10 +60,13 @@ const Register = () => {
     try {
       const response = await axios.post(`${VITE_BASE_URL}/user/login`, existingUser);
       if(response.status == 200){
-        console.log(response);
         const token = response.data.token;
+
+        console.log(response);
+        console.log(`login:${token}`)
+        localStorage.setItem("authToken", token);
         if(token !== null){
-          navigate(`/home?token=${token}`);
+          navigate("/home");   
         }
       }
       // console.log(response.data);
