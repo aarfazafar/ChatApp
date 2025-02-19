@@ -40,7 +40,7 @@ const Register = () => {
       const token = response.data.token;
             if (token) {
               localStorage.setItem("authToken", token);
-                // navigate(`/home`);
+                navigate(`/home`);
             }
     })
     .catch(error => {
@@ -64,10 +64,8 @@ const Register = () => {
         console.log(response);
         console.log(`login:${token}`)
         localStorage.setItem("authToken", token);
-        if(token !== null){
-          navigate("/home");   
-        }
       }
+      navigate("/home");
       // console.log(response.data);
     } catch (err) {
       const errorMessage = err.response?.data?.message || "Invalid Credentials";

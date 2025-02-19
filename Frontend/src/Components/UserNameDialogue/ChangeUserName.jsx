@@ -1,17 +1,45 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import './changeuser.css'
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const ChangeUserName = ({ randomName, isOpen, onClose }) => {
-
+  const VITE_BASE_URL = "http://localhost:3000";
   const [username, setUsername] = useState(randomName);
   const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
+  async function updateUsername(newUsername) {
+    try {
+      const token = localStorage.getItem("authToken");
+
+      const res = await axios.put(
+        `${VITE_BASE_URL}/user/change-username`, // ✅ Correct endpoint
+        { newUsername }, // ✅ Correct payload format
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const handleChangeUsername = async () => {
+    if (!username.trim()) {
+      alert("Username cannot be empty!");
+      return;
+    }
+
+    await updateUsername(username);
+    setIsEditing(false);
+  };
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -36,7 +64,13 @@ const ChangeUserName = ({ randomName, isOpen, onClose }) => {
           )}
 
           <button
-            onClick={() => setIsEditing(!isEditing)}
+            onClick={() => {
+              if (isEditing) {
+                handleChangeUsername();
+              } else {
+                setIsEditing(true);
+              }
+            }}
             className="text-blue-400 hover:text-blue-300 text-sm"
           >
             {isEditing ? "Save" : "Edit"}

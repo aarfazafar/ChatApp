@@ -120,7 +120,7 @@ function Home() {
           </div>
 
           {showSettings && (
-              <Setting randomName={randomUserName} token={token}/>
+              <Setting randomName={user.username} token={token}/>
           )}
         </div>
 
