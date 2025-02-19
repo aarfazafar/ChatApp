@@ -22,7 +22,7 @@ export const ChatRoomForm = () => {
     await axios
       .post(
         `${VITE_BASE_URL}/chatrooms/create`,
-        { name: roomName },
+        { name: roomName, tags: tags},
         {
           headers: {
             Authorization: `Bearer ${token}`,

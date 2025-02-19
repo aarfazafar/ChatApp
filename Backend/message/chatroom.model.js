@@ -8,12 +8,21 @@ const chatroomSchema = new mongoose.Schema({
     },
     members: [{
         type: mongoose.Schema.Types.ObjectId,
+        // isAdmin: {
+        //     type: Boolean,
+        // },
         ref: 'user',
     }],
+    admin: {
+        type:String,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
     },
+    tags: {
+        type: [{type: String}],
+    }
 });
 
 const chatroomModel = mongoose.model('chatroom', chatroomSchema);
