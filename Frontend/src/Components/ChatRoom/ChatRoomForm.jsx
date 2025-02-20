@@ -48,7 +48,7 @@ export const ChatRoomForm = () => {
     console.log(tags);
   };
   return (
-    <div className="flex flex-col justify-center items-center h-screen">
+    <div className="flex flex-col justify-center items-center h-full">
       {addTag ? (
         <div className="h-[30vh] w-[30vw] border-2 border-accent rounded-lg flex flex-col justify-center items-center gap-12">
           <input

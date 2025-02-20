@@ -115,7 +115,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         {previousMessages.slice().reverse().map((m, i) => {
           return (
           <div key={i} className={`w-fit  max-w-[75%] bg-[var(--color-hover-bg)] flex-col rounded-sm justify-center items-center ${m.sentBy._id === user._id? "justify-end text-right" : "mr-auto text-left" }`}>
-            <div className="text-xs text-[var(--color-accent)]">{user.username}</div>
+            <div className="text-xs text-[var(--color-accent)]">{m.sentBy.username}</div>
             <div className="flex pl-2 pr-4 items-end mb-3">
             <span className="mb-1">{m.text}</span> 
             <span className="text-gray-500 text-xs ml-3 ">{m.sentAt}</span>
