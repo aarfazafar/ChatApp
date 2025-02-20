@@ -114,9 +114,9 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         timestamp: new Date().toLocaleTimeString(),
       };
       socket.emit("message", newMessage);
-      setPreviousMessages((prev) => [...prev, newMessage]);
+      // setPreviousMessages((prev) => [...prev, newMessage]);
       setMessage("");
-      console.log("Test", previousMessages);
+      // console.log("Test", previousMessages);
     }
   };
 
