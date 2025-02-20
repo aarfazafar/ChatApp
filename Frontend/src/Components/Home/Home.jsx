@@ -221,7 +221,7 @@ function Home() {
             //     chat area.....
             //   </p>
             // </div>
-            <ChatRoom id={id} name = {selectedRoom.name}/>
+            <ChatRoom id={id} roomName = {selectedRoom.name} userId = {user._id} members = {selectedRoom.members}/>
           ) : (
             <div className="text-center space-y-4">
               <Ghost className="w-20 h-20 text-[var(--color-accent)] mx-auto mb-4 motion-safe:animate-bounce" />

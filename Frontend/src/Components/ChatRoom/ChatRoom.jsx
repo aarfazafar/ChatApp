@@ -2,15 +2,39 @@ import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { io } from "socket.io-client";
 import { SendHorizonal } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const ChatRoom = ({ id, name }) => {
+const ChatRoom = ({ id, roomName, userId, members }) => {
   const VITE_BASE_URL = "http://localhost:3000";
   const [socket, setSocket] = useState(null);
   const [message, setMessage] = useState("");
   const [previousMessages, setPreviousMessages] = useState([]);
   const [AllMessages, setAllMessages] = useState([]);
   const chatEndRef = React.createRef();
+  const navigate = useNavigate();
+  const isJoined = members.includes(userId);
+  const handleJoinRoom = async (e) => {
+    // e.preventDefault();
+    const token = localStorage.getItem("authToken");
 
+    await axios
+      .post(
+        `${VITE_BASE_URL}/chatrooms/join`,
+        { roomId: id},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(window.location.reload(true))
+      .catch((error) => {
+        console.error("Error:", error);
+        // alert(error.response.data.message);
+      });
+  }
   useEffect(() => {
     const newSocket = io(VITE_BASE_URL); 
     setSocket(newSocket);
@@ -56,7 +80,7 @@ const ChatRoom = ({ id, name }) => {
     e.preventDefault();
     
     if (socket && message.trim() !== "") {
-      const newMessage = { message, sentBy: "hello", id, timestamp: new Date().toLocaleTimeString() };
+      const newMessage = { message, sentBy: userId, id, timestamp: new Date().toLocaleTimeString() };
       socket.emit("message", newMessage);
       setMessage(""); 
     }
@@ -64,7 +88,7 @@ const ChatRoom = ({ id, name }) => {
 
   return (
     <div className="flex flex-col justify-between h-[90vh]">
-      <h1 className="text-4xl text-white font-[VT323] uppercase mb-8">{name}</h1>
+      <h1 className="text-4xl text-white font-[VT323] uppercase mb-8">{roomName}</h1>
       <div className="text-white overflow-y-auto h-[80vh] flex flex-col-reverse">
         <div ref={chatEndRef} />
         {previousMessages.slice().reverse().map((m, i) => (
@@ -75,7 +99,9 @@ const ChatRoom = ({ id, name }) => {
         ))}
       </div>
 
-      <form
+      {
+        isJoined ? 
+        <form
         onSubmit={handleSubmit}
         className="flex gap-3 justify-start items-start mt-4 "
       >
@@ -92,13 +118,20 @@ const ChatRoom = ({ id, name }) => {
             <SendHorizonal/>
           </button>
         </div>
-      </form>
+      </form> :
+       <button onClick={handleJoinRoom} className="w-[60vw] h-[6vh] font-medium cursor-pointer rounded-lg bg-[#161b21] border-2 hover:bg-[var(--color-hover-bg)]">
+          Join Now
+       </button>
+      }
+      
     </div>
   );
 };
 
 ChatRoom.propTypes = {
   id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
+  roomName: PropTypes.string.isRequired,
+  userId: PropTypes.string.isRequired,
+  members: PropTypes.array.isRequired
 };
 export default ChatRoom;
