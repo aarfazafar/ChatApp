@@ -21,6 +21,7 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false)
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [id, setId] = useState("");
   const [rooms, setRooms] = useState([]);
@@ -115,13 +116,13 @@ function Home() {
               onClick={() => setShowSettings(!showSettings)}
               className="p-2 hover:bg-[#2a3347] rounded-lg transition-colors"
             >
-              <Settings className="w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 hover:rotate-90" />
+              <Settings className={`w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 ${showSettings? "rotate-90": ""}`} onClick={() => setOpenSettings(true)}/>
             </button>
           </div>
 
           {showSettings && (
-              <Setting randomName={user.username} token={token}/>
-          )}
+              <Setting isOpen={openSettings} onClose={()=> setOpenSettings(false)} randomName={user.username} token={token}/>
+         )} 
         </div>
 
         <div className="p-4">

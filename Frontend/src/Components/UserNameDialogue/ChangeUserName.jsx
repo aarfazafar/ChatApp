@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
-import './changeuser.css'
+import PropTypes from "prop-types";
+import "./changeuser.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const ChangeUserName = ({ randomName, isOpen, onClose }) => {
@@ -21,7 +21,7 @@ const ChangeUserName = ({ randomName, isOpen, onClose }) => {
             "Content-Type": "application/json",
           },
         }
-      )
+      );
       console.log(res.data);
     } catch (error) {
       console.error(error);
@@ -45,7 +45,15 @@ const ChangeUserName = ({ randomName, isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div
+      className="fixed inset-0 flex items-center justify-center z-50 h-full w-full backdrop-blur-md bg-transparent"
+      style={{
+        backgroundImage: `
+      radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%), 
+      linear-gradient(to bottom, rgba(13, 17, 23, 0.7), rgba(22, 27, 34, 0.7))
+    `,
+      }}
+    >
       <div className="bg-[#0a0f1e] p-6 rounded-lg shadow-lg border border-[#2a3347] w-80 text-white relative">
         <h2 className="text-xl font-semibold mb-4 text-center">
           Change Username
@@ -78,10 +86,7 @@ const ChangeUserName = ({ randomName, isOpen, onClose }) => {
         </div>
 
         <div className="flex justify-end mt-4">
-          <button
-            onClick={onClose}
-            className="submit-button"
-          >
+          <button onClick={onClose} className="submit-button">
             Close
           </button>
         </div>

@@ -28,7 +28,7 @@ const Setting = ({randomName, token}) => {
     setDialogOpen(true);
   };
   return (
-    <div className="mt-4 p-4 bg-[#0a0f1e] rounded-lg border border-[#2a3347] space-y-3">
+    <div className={`fixed right-2 min-w-3xs mt-4 p-4 bg-[#0a0f1e] rounded-lg border border-[#2a3347] space-y-3 z-10`}>
       <button className="settings-button" onClick={handleChangeUserName}>
         <User className="settings-icons" />
         <div className="text-sm">Change Username</div>
