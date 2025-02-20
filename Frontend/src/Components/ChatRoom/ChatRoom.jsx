@@ -113,14 +113,10 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       <div className="text-white overflow-y-auto h-[80vh] flex flex-col-reverse gap-1">
         <div ref={chatEndRef} />
         {previousMessages.slice().reverse().map((m, i) => {
-          if(i > 1) {
-            var prevMsg = previousMessages[i - 1];
-          }
-          console.log(prevMsg);
           const sentByCurrentUser = m.sentBy.username === user.username;
           return (
           <div key={i} className={`w-fit max-w-[75%] bg-[var(--color-hover-bg)] flex-col rounded-sm justify-center items-center ${sentByCurrentUser ? "ml-auto justify-end" : "mr-auto justify-start"}`}>
-            <div className={`text-xs text-[var(--color-accent)] flex pl-1 pr-2 ${prevMsg?.sentBy.username === m.sentBy.username ? "hidden" : "auto"}`}>{sentByCurrentUser ? "" : m.sentBy.username}</div>
+            <div className={`text-xs text-[var(--color-accent)] flex pl-1 pr-2`}>{sentByCurrentUser ? "" : m.sentBy.username}</div>
             <div className="flex pl-2 pr-2 items-end mb-2">
             <span className="mb-1">{m.text}</span> 
             <span className="text-gray-500 text-xs ml-3 ">{m.sentAt}</span>
