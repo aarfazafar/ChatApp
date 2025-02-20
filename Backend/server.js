@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
 
   socket.on("message", async ({ message, sentBy, id, timestamp }) => {
     if (!id || !message || !sentBy) {
-      console.log({id, message, sentBy});
+      console.log({ id, message, sentBy });
       console.error("Missing required fields: room, message, sentBy");
       return;
     }
@@ -38,15 +38,14 @@ io.on("connection", (socket) => {
       text: message,
       sentBy: sentBy,
       room: id,
-      sentAt: timestamp
-    })
-    await newMessage.save();
-    console.log(`Message received in room ${id}: ${message} - by sender ${sentBy.username}`);
-    if (id) {
-      io.to(id).emit("received", newMessage); 
-    } else {
-      io.emit("received", newMessage);
-    }
+      sentAt: timestamp,
+    });
+    const savedMessage = await newMessage.save();
+    await savedMessage.populate("sentBy", "username");
+    console.log(
+      `Message received in room ${id}: ${message} - by sender ${sentBy?.username}`
+    );
+      io.to(id).emit("received", savedMessage);
   });
 
   socket.on("join-room", async (roomID) => {
@@ -68,5 +67,3 @@ io.on("connection", (socket) => {
 server.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
-
-
