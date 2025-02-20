@@ -2,14 +2,18 @@ const userService = require('./user.service');
 const { validationResult } = require('express-validator');
 const userModel = require('./user.model');
 const tokenBlacklistModel = require('./tokenBlacklist.model');
-const { generate } = require ("random-words");
+// const { generate} = require("random-words");
+// import randomWords from "random-words";
+const randomWords = require("random-words");
+
+// Generate a single random word
 
 module.exports.registerUser = async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-    const randomName = generate({
+    const randomName = randomWords({
         exactly: 3,
         wordsPerString: 1,
         minLength: 7,
