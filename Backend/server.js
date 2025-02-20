@@ -41,7 +41,7 @@ io.on("connection", (socket) => {
       sentAt: timestamp
     })
     await newMessage.save();
-    console.log(`Message received in room ${id}: ${message}`);
+    console.log(`Message received in room ${id}: ${message} - by sender ${sentBy.username}`);
     if (id) {
       io.to(id).emit("received", newMessage); 
     } else {
@@ -54,6 +54,7 @@ io.on("connection", (socket) => {
     console.log(`User ${socket.id} joined room: ${roomID}`);
 
     const messages = await messageModel.find({ room: roomID }).sort("sentAt");
+    // console.log(messages)
     socket.emit("previous-messages", messages);
     socket.to(roomID).emit("Welcome", `User ${socket.id} joined the room`);
   });

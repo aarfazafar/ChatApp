@@ -30,7 +30,7 @@ module.exports.getMessages = async (req, res) => {
   try {
     const messages = await messageModel
       .find({ room: roomId })
-      .populate("sentBy", "name");
+      .populate("sentBy", "username");
     res.status(200).json(messages);
   } catch (error) {
     console.log(error);

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { io } from "socket.io-client";
-import { SendHorizonal } from "lucide-react";
+import { IdCardIcon, SendHorizonal } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const ChatRoom = ({ id, roomName, userId, members }) => {
+const ChatRoom = ({ id, roomName, user, members }) => {
   const VITE_BASE_URL = "http://localhost:3000";
   const [socket, setSocket] = useState(null);
   const [message, setMessage] = useState("");
@@ -13,7 +13,7 @@ const ChatRoom = ({ id, roomName, userId, members }) => {
   const [AllMessages, setAllMessages] = useState([]);
   const chatEndRef = React.createRef();
   const navigate = useNavigate();
-  const isJoined = members.includes(userId);
+  const isJoined = members.includes(user._id);
   const handleJoinRoom = async (e) => {
     // e.preventDefault();
     const token = localStorage.getItem("authToken");
@@ -44,12 +44,13 @@ const ChatRoom = ({ id, roomName, userId, members }) => {
     });
 
     newSocket.on("previous-messages", (data) => {
+      console.log("Messages received:", data);
       setPreviousMessages(data);
     })
     newSocket.on("received", (data) => {
       console.log("Received:", data);
       // AllMessages.push(data);
-      setPreviousMessages((prev) => [...prev, data]);
+      setPreviousMessages(data);
       // console.log(AllMessages)
     });
 
@@ -66,10 +67,26 @@ const ChatRoom = ({ id, roomName, userId, members }) => {
     if (socket) {
       socket.emit("leave-room", id); 
       socket.emit("join-room", id); 
-      setAllMessages([]); // Clear messages when switching rooms
+      setAllMessages([]); 
     }
   }, [id, socket]);
 
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); 
+        const response = await axios.get(`${VITE_BASE_URL}/messages/${id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        console.log("Fetched messages:", response.data);
+        setPreviousMessages(response.data);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    
+    fetchMessages();
+  }, [id]);
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -80,9 +97,11 @@ const ChatRoom = ({ id, roomName, userId, members }) => {
     e.preventDefault();
     
     if (socket && message.trim() !== "") {
-      const newMessage = { message, sentBy: userId, id, timestamp: new Date().toLocaleTimeString() };
+      // console.log("Test", user)
+      const newMessage = { message, sentBy: user, id, timestamp: new Date().toLocaleTimeString() };
       socket.emit("message", newMessage);
       setMessage(""); 
+      console.log("Test",previousMessages);
     }
   };
 
@@ -91,12 +110,16 @@ const ChatRoom = ({ id, roomName, userId, members }) => {
       <h1 className="text-4xl text-white font-[VT323] uppercase mb-8">{roomName}</h1>
       <div className="text-white overflow-y-auto h-[80vh] flex flex-col-reverse">
         <div ref={chatEndRef} />
-        {previousMessages.slice().reverse().map((m, i) => (
-          <div key={i} className="h-[4vh] w-fit bg-[#1c2530] rounded-sm pl-2 pr-4 flex items-end mb-3">
+        {previousMessages.slice().reverse().map((m, i) => {
+          return (
+          <div key={i} className={`w-fit  max-w-[75%] bg-[var(--color-hover-bg)] flex-col rounded-sm justify-center items-center ${m.sentBy._id === user._id? "justify-end text-right" : "mr-auto text-left" }`}>
+            <div className="text-xs text-[var(--color-accent)]">{m.sentBy.username}</div>
+            <div className="flex pl-2 pr-4 items-end mb-3">
             <span className="mb-1">{m.text}</span> 
             <span className="text-gray-500 text-xs ml-3 ">{m.sentAt}</span>
+            </div>
           </div>
-        ))}
+        )})}
       </div>
 
       {
@@ -131,7 +154,7 @@ const ChatRoom = ({ id, roomName, userId, members }) => {
 ChatRoom.propTypes = {
   id: PropTypes.string.isRequired,
   roomName: PropTypes.string.isRequired,
-  userId: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   members: PropTypes.array.isRequired
 };
 export default ChatRoom;
