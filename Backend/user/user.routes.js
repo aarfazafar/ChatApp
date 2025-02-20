@@ -21,5 +21,7 @@ router.get('/logout', authMiddleware.authUser, userControl.logoutUser);
 
 router.get('/profile', authMiddleware.authUser, userControl.getProfile);
 
+router.put('/change-username', authMiddleware.authUser, userControl.changeUsername);
+
 module.exports = router;
 

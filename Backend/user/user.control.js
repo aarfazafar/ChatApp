@@ -90,3 +90,28 @@ module.exports.logoutUser = async (req, res) => {
 module.exports.getProfile = async (req, res) => {
     res.status(200).json(req.user);
 };
+
+module.exports.changeUsername = async (req, res) => {
+    try {
+        const {newUsername} = req.body;
+        const userId = req.user._id;
+
+        if(!newUsername) {
+            return res.status(400).json({message: "New username required"});
+        }
+
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            {username: newUsername},
+            {new: true}
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+      
+        res.status(200).json({ message: "Username updated successfully", updatedUser });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating user", error });
+    }
+}
