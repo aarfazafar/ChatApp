@@ -21,7 +21,7 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [openSettings, setOpenSettings] = useState(false)
+  const [openSettings, setOpenSettings] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [id, setId] = useState("");
   const [rooms, setRooms] = useState([]);
@@ -30,33 +30,33 @@ function Home() {
   // console.log("Rendering Home with id:", id);
   const [user, setUser] = useState({});
   useEffect(() => {
-      const storedToken = localStorage.getItem("authToken");
-      if (storedToken) {
-          setToken(storedToken);
-      }
+    const storedToken = localStorage.getItem("authToken");
+    if (storedToken) {
+      setToken(storedToken);
+    }
   }, []);
 
   useEffect(() => {
-      if (token) {
-          getUser();
-      }
+    if (token) {
+      getUser();
+    }
   }, [token]);
 
   async function getUser() {
-      try {
-          if (!token) return; 
-          const res = await axios.get(`${VITE_BASE_URL}/user/profile`, {
-              headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-              },
-          });
-          setUser(res.data); 
-          console.log("User fetched:", res.data);
-          // console.log(rooms);
-      } catch (error) {
-          console.log("Error fetching user:", error);
-      }
+    try {
+      if (!token) return;
+      const res = await axios.get(`${VITE_BASE_URL}/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setUser(res.data);
+      console.log("User fetched:", res.data);
+      // console.log(rooms);
+    } catch (error) {
+      console.log("Error fetching user:", error);
+    }
   }
 
   useEffect(() => {
@@ -70,7 +70,7 @@ function Home() {
       }
     };
     allRooms();
-  }, [])
+  }, []);
   const handleRoomSelect = (room) => {
     setSelectedRoom(room);
     setShowMobileChat(true);
@@ -116,13 +116,23 @@ function Home() {
               onClick={() => setShowSettings(!showSettings)}
               className="p-2 hover:bg-[#2a3347] rounded-lg transition-colors"
             >
-              <Settings className={`w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 ${showSettings? "rotate-90": ""}`} onClick={() => setOpenSettings(true)}/>
+              <Settings
+                className={`w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 ${
+                  showSettings ? "rotate-90" : ""
+                }`}
+                onClick={() => setOpenSettings(true)}
+              />
             </button>
           </div>
 
           {showSettings && (
-              <Setting isOpen={openSettings} onClose={()=> setOpenSettings(false)} randomName={user.username} token={token}/>
-         )} 
+            <Setting
+              isOpen={openSettings}
+              onClose={() => setOpenSettings(false)}
+              randomName={user.username}
+              token={token}
+            />
+          )}
         </div>
 
         <div className="p-4">
@@ -138,46 +148,68 @@ function Home() {
           </div>
         </div>
         <div className="flex">
-          <button onClick={() => setActiveTab("all")} className={`!w-[50%] cursor-pointer py-2 rounded-lg ${activeTab === "all" ? "bg-[var(--color-hover-bg)]" : "bg-[#161b21]"}`}>All Rooms</button>
-          <button onClick={() => setActiveTab("my")} className={`!w-[50%] cursor-pointer py-2 rounded-lg ${activeTab === "my" ? "bg-[var(--color-hover-bg)]" : "bg-[#161b21]"}`}>My Rooms</button>
+          <button
+            onClick={() => setActiveTab("all")}
+            className={`!w-[50%] cursor-pointer py-2 rounded-lg ${
+              activeTab === "all"
+                ? "bg-[var(--color-hover-bg)]"
+                : "bg-[#161b21]"
+            }`}
+          >
+            All Rooms
+          </button>
+          <button
+            onClick={() => setActiveTab("my")}
+            className={`!w-[50%] cursor-pointer py-2 rounded-lg ${
+              activeTab === "my" ? "bg-[var(--color-hover-bg)]" : "bg-[#161b21]"
+            }`}
+          >
+            My Rooms
+          </button>
         </div>
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-2">
-            {displayRooms.map((room) => (
-              <div
-              key={room._id}
-              className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
-              onClick={() => handleRoomSelect(room)}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
-                  {room.name}
-                </h3>
-                <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
-                  <Users className="w-4 h-4" />
-                  <span>{room.members.length}</span>
+            {displayRooms
+              .filter((item) => {
+                return item.name
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase());
+              })
+              .map((room) => (
+                <div
+                  key={room._id}
+                  className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
+                  onClick={() => handleRoomSelect(room)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
+                      {room.name}
+                    </h3>
+                    <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
+                      <Users className="w-4 h-4" />
+                      <span>{room.members.length}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-1 flex-wrap">
+                      {room.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="text-xs px-2 pb-1.5 pt-1 rounded-full bg-[var(--color-input-bg)] text-[var(--color-text-tertiary)]"
+                        >
+                          {`#${tag}`}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
+                      <Clock className="w-3 h-3" />
+                      <span className=" [var(--color-text-tertiary)]">
+                        {room.timeLeft}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center justify-between">
-              <div className="flex gap-1 flex-wrap">
-                    {room.tags.map((tag, index) => (
-                      <span
-                      key={index}
-                      className="text-xs px-2 pb-1.5 pt-1 rounded-full bg-[var(--color-input-bg)] text-[var(--color-text-tertiary)]"
-                    >
-                      {`#${tag}`}
-                    </span>
-                    ))}
-                </div>
-                <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
-                  <Clock className="w-3 h-3" />
-                  <span className=" [var(--color-text-tertiary)]">
-                    {room.timeLeft}
-                  </span>
-                </div>
-              </div>
-            </div>
-            ))}
+              ))}
           </div>
         </div>
 
@@ -187,9 +219,10 @@ function Home() {
             </button> */}
           <button
             onClick={() => {
-              navigate("/join")
+              navigate("/join");
             }}
-            className="plus-button group-hover:animate-pulse  relative">
+            className="plus-button group-hover:animate-pulse  relative"
+          >
             <Plus className="w-4 h-4 absolute top-4 left-35" />
             <div>Create Room</div>
           </button>
@@ -222,7 +255,12 @@ function Home() {
             //     chat area.....
             //   </p>
             // </div>
-            <ChatRoom id={id} roomName = {selectedRoom.name} user = {user} members = {selectedRoom.members}/>
+            <ChatRoom
+              id={id}
+              roomName={selectedRoom.name}
+              user={user}
+              members={selectedRoom.members}
+            />
           ) : (
             <div className="text-center space-y-4">
               <Ghost className="w-20 h-20 text-[var(--color-accent)] mx-auto mb-4 motion-safe:animate-bounce" />
