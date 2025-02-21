@@ -5,7 +5,7 @@ import { IdCardIcon, SendHorizonal } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Linkify from "react-linkify";
-
+import ContextMenu from "../ContextMenu/ContextMenu";
 const ChatRoom = ({ id, roomName, user, members }) => {
   const VITE_BASE_URL = "http://localhost:3000";
   const [socket, setSocket] = useState(null);
@@ -143,6 +143,17 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     setMenu({ visible: false, x: 0, y: 0, messageId: null });
   };
 
+  const handleContextMenu = (e, messageId) => {
+    e.preventDefault(); 
+  
+    setMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      messageId,
+    });
+  };
+  
   const handleLeave = (e) => {
     e.preventDefault();
     setLeave(true)
@@ -159,7 +170,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   return (
     <div
       className="flex flex-col justify-between h-[calc(100vh-<HEADER_HEIGHT>px)] max-h-[90vh] overflow-y-hidden"
-      // onClick={handleContextClick}
+      onClick={handleContextClick}
     >
       {leave && (
   <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen backdrop-blur-sm bg-transparent">
@@ -224,7 +235,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                         key={key}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-accent underline"
+                        className="text-blue-500 underline"
                       >
                         {text}
                       </a>
