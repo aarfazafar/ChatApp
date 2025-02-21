@@ -52,3 +52,26 @@ module.exports.getRooms = async (req, res) => {
     res.status(500).json({error: "Cant get rooms"})
   }
 }
+
+module.exports.leaveRoom = async (req, res) => {
+  const {userId, roomId} = req.body;
+  if(!userId || !roomId){
+    return res.status(400).json({error: "UserId and RoomId required"});
+  }
+
+  await chatroomModel.updateOne(
+    {_id: roomId},
+    {$pull: {members: userId}}
+  ).then(res.status(200).json({message: `${userId} left room`}))
+}
+
+module.exports.getRoomInfo = async (req, res) => {
+  const {roomId} = req.body;
+  try {
+    const room = await chatroomModel.findById(roomId);
+    res.json(room)
+  } catch (error) {
+    console.log(error)
+    res.status(400).json(error);
+  }
+}

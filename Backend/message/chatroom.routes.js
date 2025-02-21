@@ -14,6 +14,14 @@ router.post('/join', [
     body('roomId').isString().notEmpty().withMessage('Room ID is required'),
 ], chatroomControl.joinChatroom);
 
+router.post('/leave', [
+    authMiddleware.authUser,
+    body('roomId').isString().notEmpty().withMessage('Room ID is required'),
+    body('userId').isString().notEmpty().withMessage('User ID is required'),
+], chatroomControl.leaveRoom);
+
+router.get('/room',authMiddleware.authUser, chatroomControl.getRoomInfo)
+
 router.get('/allRooms', chatroomControl.getRooms);
 
 module.exports = router;
