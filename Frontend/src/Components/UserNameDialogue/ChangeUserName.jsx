@@ -33,8 +33,8 @@ const ChangeUserName = ({ randomName, isOpen, onClose }) => {
       alert("Username cannot be empty!");
       return;
     }
-
     await updateUsername(username);
+    window.location.reload(true);
     setIsEditing(false);
   };
 

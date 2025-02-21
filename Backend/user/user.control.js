@@ -4,7 +4,7 @@ const userModel = require('./user.model');
 const tokenBlacklistModel = require('./tokenBlacklist.model');
 // const { generate} = require("random-words");
 // import randomWords from "random-words";
-const randomWords = require("random-words");
+const generate = require("random-words");
 
 // Generate a single random word
 
@@ -13,7 +13,7 @@ module.exports.registerUser = async (req, res) => {
     if(!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-    const randomName = randomWords({
+    const randomName = generate({
         exactly: 3,
         wordsPerString: 1,
         minLength: 7,
