@@ -18,11 +18,11 @@ export const ChatRoomForm = () => {
     e.preventDefault();
     console.log(roomName);
     const token = localStorage.getItem("authToken");
-    console.log(token)
+    console.log(token);
     await axios
       .post(
         `${VITE_BASE_URL}/chatrooms/create`,
-        { name: roomName, tags: tags},
+        { name: roomName, tags: tags },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -35,7 +35,7 @@ export const ChatRoomForm = () => {
         console.error("Error:", error);
         // alert(error.response.data.message);
       });
-    navigate("/home")
+    navigate("/home");
     setRoomName("");
   };
   const addTagHandler = (e) => {

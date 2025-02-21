@@ -13,7 +13,7 @@ module.exports.sendMessage = async (req, res) => {
       text: text,
       sentBy: sentBy,
       room: room,
-      sentAt: sentAt
+      sentAt: sentAt,
     });
 
     await message.save();
@@ -35,5 +35,15 @@ module.exports.getMessages = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error retrieving messages" });
+  }
+};
+
+module.exports.deleteMessage = async (req, res) => {
+  try {
+    await messageModel.findOneAndDelete(req.body.id).then(res.status(200).send({ success: true }))
+    
+  } catch (error) {
+    res.status.send(400).json({ success: false, msg: error.message });
+    console.log(error)
   }
 };

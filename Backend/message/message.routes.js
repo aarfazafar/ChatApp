@@ -17,5 +17,6 @@ router.post('/send', [
 ], messageControl.sendMessage);
 
 router.get('/:roomId', authMiddleware.authUser, messageControl.getMessages);
+router.post('/delete-message', authMiddleware.authUser,body('id').isString().notEmpty().withMessage('Chat ID is required'), messageControl.deleteMessage);
 
 module.exports = router;

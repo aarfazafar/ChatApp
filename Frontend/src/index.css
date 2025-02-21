@@ -16,7 +16,9 @@
   --color-hover-bg:#1c2530;
   --font-vt: "VT323";
 }
-
+* {
+  @apply box-border
+}
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

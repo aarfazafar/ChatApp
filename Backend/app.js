@@ -25,7 +25,6 @@ const messageRoutes = require("./message/message.routes");
 app.use("/chatrooms", chatroomRoutes);
 app.use("/messages", messageRoutes);
 
-
 const connectToDB = require('./db');
 connectToDB();
 

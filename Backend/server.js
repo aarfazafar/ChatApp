@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
     console.log(
       `Message received in room ${id}: ${message} - by sender ${sentBy?.username}`
     );
-      io.to(id).emit("received", savedMessage);
+    io.to(id).emit("received", savedMessage);
   });
 
   socket.on("join-room", async (roomID) => {
@@ -62,6 +62,17 @@ io.on("connection", (socket) => {
     socket.leave(roomId);
     console.log(`User ${socket.id} left room ${roomId}`);
   });
+
+
+
+  socket.on("delete-message", async (chatid) => {
+    try {
+      console.log(`Message ${chatid} deleted`);
+    } catch (error) {
+      console.log("Error deleting message:", error);
+    }
+  });
+  
 });
 
 server.listen(port, () => {

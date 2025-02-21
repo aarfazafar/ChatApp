@@ -198,12 +198,12 @@ function Home() {
 
       {/* Main Content */}
       <div
-        className={`flex-1 ${
+        className={`flex-1 h-[100vh] ${
           !showMobileChat ? "hidden md:flex" : "flex"
         } flex-col`}
       >
         {/* Mobile Header */}
-        <div className="md:hidden p-4 border-b border-[#2a3347] bg-[#141b2d]/80">
+        <div className="md:hidden p-2 border-b border-[#2a3347] bg-[#141b2d]/80">
           <button
             onClick={handleBackToRooms}
             className="flex items-center gap-2 text-[#00ffff]"
