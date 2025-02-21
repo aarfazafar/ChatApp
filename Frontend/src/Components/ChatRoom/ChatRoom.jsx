@@ -144,8 +144,8 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   };
 
   const handleContextMenu = (e, messageId) => {
-    e.preventDefault(); 
-  
+    e.preventDefault();
+
     setMenu({
       visible: true,
       x: e.clientX,
@@ -153,103 +153,114 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       messageId,
     });
   };
-  
+
   const handleLeave = (e) => {
     e.preventDefault();
-    setLeave(true)
-  }
+    setLeave(true);
+  };
 
   const handleLeaveRoom = async (e) => {
     const token = localStorage.getItem("authToken");
-    const response = await axios.post(`${VITE_BASE_URL}/chatrooms/leave`, { roomId: id, userId: user._id }, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(setLeave(false));
-    console.log(response)
+    const response = await axios
+      .post(
+        `${VITE_BASE_URL}/chatrooms/leave`,
+        { roomId: id, userId: user._id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .then(setLeave(false));
+    console.log(response);
     window.location.reload(true);
-  }
+  };
   return (
     <div
       className="flex flex-col justify-between h-[calc(100vh-<HEADER_HEIGHT>px)] max-h-[90vh] overflow-y-hidden"
       onClick={handleContextClick}
     >
       {leave && (
-  <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen backdrop-blur-sm bg-transparent">
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-64 w-[30vw] border-2 flex flex-col justify-between items-center border-accent rounded-lg bg-[#161b21] py-8">
-      <h1 className="text-2xl">Leave Room</h1>
-      <div className="flex w-full h-1/4">
-        <button 
-        onClick={handleLeaveRoom}
-        className="w-1/2 hover:bg-[var(--color-hover-bg)] hover:rounded-lg cursor-pointer">
-          OK
-        </button>
-        <button
-          onClick={() => setLeave(false)} 
-          className="w-1/2 hover:bg-[var(--color-hover-bg)] hover:rounded-lg cursor-pointer"
-        >
-          CANCEL
-        </button>
-      </div>
-    </div> 
-  </div>
-)}
+        <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen backdrop-blur-sm bg-transparent">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-64 w-[30vw] border-2 flex flex-col justify-between items-center border-accent rounded-lg bg-[#161b21] py-8">
+            <h1 className="text-2xl">Leave Room</h1>
+            <div className="flex w-full h-1/4">
+              <button
+                onClick={handleLeaveRoom}
+                className="w-1/2 hover:bg-[var(--color-hover-bg)] hover:rounded-lg cursor-pointer"
+              >
+                OK
+              </button>
+              <button
+                onClick={() => setLeave(false)}
+                className="w-1/2 hover:bg-[var(--color-hover-bg)] hover:rounded-lg cursor-pointer"
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex justify-between items-center">
         <h1 className="text-4xl text-white font-[VT323] uppercase mb-8">
           {roomName}
         </h1>
-        {
-          members.includes(user._id) && <button
-          onClick={handleLeave}
-          className="mb-8 w-[20%] border-2 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer h-[50%]"  
-        >
-          Leave Room
-        </button>
-        }
+        {members.includes(user._id) && (
+          <button
+            onClick={handleLeave}
+            className="mb-8 w-[20%] border-2 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer h-[50%]"
+          >
+            Leave Room
+          </button>
+        )}
       </div>
       <div className="text-white overflow-y-auto h-[80vh] flex flex-col-reverse gap-1">
         <div ref={chatEndRef} />
-        {members.includes(user._id) && previousMessages
-          .slice()
-          .reverse()
-          .map((m, i) => {
-            return (
-              <div
-                key={i}
-                className={`w-fit  max-w-[75%] bg-[var(--color-hover-bg)] flex-col rounded-sm justify-center items-center ${
-                  m.sentBy._id === user._id
-                    ? "ml-auto justify-end"
-                    : "mr-auto justify-start"
-                }`}
-                onContextMenu={(e) => handleContextMenu(e, m._id)}
-              >
-                <div className="text-xs text-[var(--color-accent)]">
-                  {m.sentBy.username}
+        {members.includes(user._id) &&
+          previousMessages
+            .slice()
+            .reverse()
+            .map((m, i, arr) => {
+              const isLastMessage = i === arr.length - 1;
+              const isNewUser =
+                isLastMessage || arr[i + 1]?.sentBy._id !== m.sentBy._id;
+              return (
+                <div
+                  key={i}
+                  className={`w-fit px-2 max-w-[75%] bg-[var(--color-hover-bg)] flex-col rounded-sm justify-center items-center ${
+                    m.sentBy._id === user._id
+                      ? "ml-auto justify-end"
+                      : "mr-auto justify-start"
+                  }`}
+                  onContextMenu={(e) => handleContextMenu(e, m._id)}
+                >
+                  {isNewUser && (
+                    <div className="text-xs text-[var(--color-accent)]">
+                      {m.sentBy.username}
+                    </div>
+                  )}
+                  <div className="flex pl-2 pr-2 items-end mb-2">
+                    <Linkify
+                      componentDecorator={(href, text, key) => (
+                        <a
+                          href={href}
+                          key={key}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline"
+                        >
+                          {text}
+                        </a>
+                      )}
+                    >
+                      <span className="mb-1">{m.text}</span>
+                    </Linkify>
+                    <span className="text-gray-500 text-xs ml-3 ali">
+                      {m.sentAt}
+                    </span>
+                  </div>
                 </div>
-
-                <div className="flex pl-2 pr-2 items-end mb-2">
-                  
-                  <Linkify
-                    componentDecorator={(href, text, key) => (
-                      <a
-                        href={href}
-                        key={key}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline"
-                      >
-                        {text}
-                      </a>
-                    )}
-                  >
-                    <span className="mb-1">{m.text}</span>
-                  </Linkify>
-                  <span className="text-gray-500 text-xs ml-3 ">
-                    {m.sentAt}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
       </div>
       {menu.visible && (
         <div
