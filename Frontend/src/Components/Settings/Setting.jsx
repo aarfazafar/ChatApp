@@ -5,10 +5,11 @@ import { User, Moon, Eye, Shield, HelpCircleIcon, LogOut } from "lucide-react";
 import ChangeUserName from "../UserNameDialogue/ChangeUserName";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import ComingSoon from "./ComingSoon";
 const Setting = ({randomName, token}) => {
   const VITE_BASE_URL =  "http://localhost:3000";
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isThemeOpen, setThemeOpen] = useState(false);
   const navigate = useNavigate();
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -33,19 +34,19 @@ const Setting = ({randomName, token}) => {
         <User className="settings-icons" />
         <div className="text-sm">Change Username</div>
       </button>
-      <button className="settings-button">
+      <button className="settings-button" onClick={()=>setThemeOpen(true)}>
         <Moon className="settings-icons" />
         <div className="text-sm">Theme</div>
       </button>
-      <button className="settings-button">
+      <button className="settings-button" onClick={()=>setThemeOpen(true)}>
         <Eye className="settings-icons" />
         <div className="text-sm">Privacy</div>
       </button>
-      <button className="settings-button">
+      <button className="settings-button" onClick={()=>setThemeOpen(true)}>
         <Shield className="settings-icons" />
         <div className="text-sm">Security</div>
       </button>
-      <button className="settings-button">
+      <button className="settings-button" onClick={()=>setThemeOpen(true)}>
         <HelpCircleIcon className="settings-icons" />
         <div className="text-sm">Help</div>
       </button>
@@ -56,6 +57,10 @@ const Setting = ({randomName, token}) => {
       <ChangeUserName randomName={randomName}
         isOpen={isDialogOpen}
         onClose={() => setDialogOpen(false)}
+      />
+      <ComingSoon
+        isOpen={isThemeOpen}
+        onClose={() => setThemeOpen(false)}
       />
     </div>
   );
