@@ -2,8 +2,6 @@ const userService = require('./user.service');
 const { validationResult } = require('express-validator');
 const userModel = require('./user.model');
 const tokenBlacklistModel = require('./tokenBlacklist.model');
-// const { generate} = require("random-words");
-// import randomWords from "random-words";
 const generate = require("random-words");
 
 // Generate a single random word

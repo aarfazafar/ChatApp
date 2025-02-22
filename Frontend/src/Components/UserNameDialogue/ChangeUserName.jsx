@@ -13,8 +13,8 @@ const ChangeUserName = ({ randomName, isOpen, onClose }) => {
       const token = localStorage.getItem("authToken");
 
       const res = await axios.put(
-        `${VITE_BASE_URL}/user/change-username`, // ✅ Correct endpoint
-        { newUsername }, // ✅ Correct payload format
+        `${VITE_BASE_URL}/user/change-username`,
+        { newUsername },
         {
           headers: {
             Authorization: `Bearer ${token}`,

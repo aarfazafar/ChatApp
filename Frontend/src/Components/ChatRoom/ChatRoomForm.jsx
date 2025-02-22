@@ -48,7 +48,7 @@ export const ChatRoomForm = () => {
     console.log(tags);
   };
   return (
-    <div className="flex flex-col justify-center items-center h-full">
+    <div className="flex flex-col justify-center items-center h-screen w-screen">
       {addTag ? (
         <div className="h-[30vh] w-[30vw] border-2 border-accent rounded-lg flex flex-col justify-center items-center gap-12">
           <input
@@ -80,13 +80,13 @@ export const ChatRoomForm = () => {
                   setRoomName(e.target.value);
                 }}
                 type="text"
-                className="input-field pl-10 !w-[24vw]"
+                className="input-field !w-2/3"
                 name="newGroup"
                 placeholder="Name the shadow"
               />
               <button
                 onClick={addRoomHandler}
-                className="testing !px-32 !py-4 top-0 !mt-8 rounded-lg"
+                className="testing !w-2/3 top-0 !mt-8 rounded-lg"
               >
                 Summon
               </button>
