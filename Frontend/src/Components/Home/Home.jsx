@@ -14,6 +14,7 @@ import Setting from "../Settings/Setting";
 import { generate } from "random-words";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import moment from "moment";
 function Home() {
   const [token, setToken] = useState("");
   const location = useLocation();
@@ -143,8 +144,9 @@ function Home() {
         </div>
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-2">
-            {displayRooms.map((room) => (
-              <div
+            {displayRooms.map((room, index) => (
+              room.members.length > 0 && (
+                <div
               key={room._id}
               className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
               onClick={() => handleRoomSelect(room)}
@@ -172,11 +174,12 @@ function Home() {
                 <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
                   <Clock className="w-3 h-3" />
                   <span className=" [var(--color-text-tertiary)]">
-                    {room.timeLeft}
+                    {moment(room.createdAt).fromNow()}
                   </span>
                 </div>
               </div>
             </div>
+              )
             ))}
           </div>
         </div>
@@ -214,7 +217,7 @@ function Home() {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 p-8 flex items-center justify-center">
+        <div className="flex-1 p-8 flex items-center justify-center bg-[#161b21]">
           {selectedRoom ? (
             // <div className="text-center">
             //   <h2 className="text-2xl font-bold mb-4">{selectedRoom.name}</h2>

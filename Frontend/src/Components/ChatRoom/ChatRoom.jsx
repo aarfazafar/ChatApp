@@ -5,6 +5,7 @@ import { IdCardIcon, SendHorizonal } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Linkify from "react-linkify";
+import ContextMenu from "../ContextMenu/ContextMenu";
 
 const ChatRoom = ({ id, roomName, user, members }) => {
   const VITE_BASE_URL = "http://localhost:3000";
@@ -158,7 +159,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   }
   return (
     <div
-      className="flex flex-col justify-between h-[calc(100vh-<HEADER_HEIGHT>px)] max-h-[90vh] overflow-y-hidden"
+      className="flex flex-col justify-between h-[90vh]"
       // onClick={handleContextClick}
     >
       {leave && (
@@ -189,7 +190,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         {
           members.includes(user._id) && <button
           onClick={handleLeave}
-          className="mb-8 w-[20%] border-2 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer h-[50%]"  
+          className="mb-8 w-1/5 border-2 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer h-2/3"  
         >
           Leave Room
         </button>
@@ -209,7 +210,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                     ? "ml-auto justify-end"
                     : "mr-auto justify-start"
                 }`}
-                onContextMenu={(e) => handleContextMenu(e, m._id)}
+                onContextMenu={(e) => handleContextClick(e, m._id)}
               >
                 <div className="text-xs text-[var(--color-accent)]">
                   {m.sentBy.username}
@@ -240,7 +241,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
             );
           })}
       </div>
-      {menu.visible && (
+      {/* {menu.visible && (
         <div
           ref={menuRef}
           className="absolute w-fit"
@@ -248,7 +249,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         >
           <ContextMenu messageId={menu.messageId} />
         </div>
-      )}
+      )} */}
       {isJoined ? (
         <form
           onSubmit={handleSubmit}

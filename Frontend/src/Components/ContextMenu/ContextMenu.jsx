@@ -1,6 +1,7 @@
 import { InfoIcon, Eye, EditIcon, DeleteIcon } from "lucide-react";
 import "../Settings/settings.css";
 import { useState } from "react";
+import PropTypes from 'prop-types';
 import EditContent from "./EditContent";
 import DeleteContent from "./DeleteContent";
 import Info from "./Info";
@@ -50,6 +51,9 @@ const ContextMenu = ({messageId}) => {
       </MenuModal>
     </>
   );
+};
+ContextMenu.propTypes = {
+  messageId: PropTypes.string.isRequired,
 };
 
 export default ContextMenu;
