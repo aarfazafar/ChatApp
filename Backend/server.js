@@ -11,7 +11,7 @@ const server = createServer(app);
 const FRONTEND = process.env.VITE_FRONTEND_URL;
 const io = new Server(server, {
   cors: {
-    origin: FRONTEND,
+    origin: "https://faceless-f9yz.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   },
