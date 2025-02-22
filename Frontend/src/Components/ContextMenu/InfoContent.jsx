@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Info = () => (
+const InfoContent = () => (
   <div>
     <h2 className="text-lg font-semibold mb-2">Information</h2>
     <p>This is some useful information about the item.</p>
@@ -8,4 +8,4 @@ const Info = () => (
   </div>
 );
 
-export default Info;
+export default InfoContent;

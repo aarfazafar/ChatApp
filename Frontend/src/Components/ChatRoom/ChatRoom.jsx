@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { io } from "socket.io-client";
-import { IdCardIcon, SendHorizonal } from "lucide-react";
+import { IdCardIcon, SendHorizontal } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Linkify from "react-linkify";
-import ContextMenu from "../ContextMenu/ContextMenu";
 
 const ChatRoom = ({ id, roomName, user, members }) => {
   const VITE_BASE_URL = "http://localhost:3000";
@@ -144,59 +143,86 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     setMenu({ visible: false, x: 0, y: 0, messageId: null });
   };
 
+  const handleContextMenu = (e, messageId) => {
+    e.preventDefault();
+
+    setMenu({
+      visible: true,
+      x: e.clientX,
+      y: e.clientY,
+      messageId,
+    });
+  };
+
   const handleLeave = (e) => {
     e.preventDefault();
-    setLeave(true)
-  }
+    setLeave(true);
+  };
 
   const handleLeaveRoom = async (e) => {
     const token = localStorage.getItem("authToken");
-    const response = await axios.post(`${VITE_BASE_URL}/chatrooms/leave`, { roomId: id, userId: user._id }, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then(setLeave(false));
-    console.log(response)
+    const response = await axios
+      .post(
+        `${VITE_BASE_URL}/chatrooms/leave`,
+        { roomId: id, userId: user._id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .then(setLeave(false));
+    console.log(response);
     window.location.reload(true);
-  }
+  };
   return (
     <div
-      className="flex flex-col justify-between h-[90vh]"
+      className="flex flex-col justify-between h-[calc(100vh-<HEADER_HEIGHT>px)] max-h-[90vh] overflow-y-hidden"
       // onClick={handleContextClick}
     >
       {leave && (
-  <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen backdrop-blur-sm bg-transparent">
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-64 w-[30vw] border-2 flex flex-col justify-between items-center border-accent rounded-lg bg-[#161b21] py-8">
-      <h1 className="text-2xl">Leave Room</h1>
-      <div className="flex w-full h-1/4">
-        <button 
-        onClick={handleLeaveRoom}
-        className="w-1/2 hover:bg-[var(--color-hover-bg)] hover:rounded-lg cursor-pointer">
-          OK
-        </button>
-        <button
-          onClick={() => setLeave(false)} 
-          className="w-1/2 hover:bg-[var(--color-hover-bg)] hover:rounded-lg cursor-pointer"
-        >
-          CANCEL
-        </button>
-      </div>
-    </div> 
-  </div>
-)}
+        <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen bg-transparent">
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 min-h-64
+       w-[90vw] sm:w-[70vw] md:w-[60vw] lg:w-[40vw] xl:w-[30vw] border-2 border-accent rounded-lg 
+       bg-[#161b21] p-4 sm:p-8 flex flex-col justify-between items-center"
+          >
+            <h1 className="text-6xl tracking-wide vtFont">Leave Room</h1>
+            <p className="text-lg">Are you sure you want to leave the room?</p>
+            <div className="flex justify-center w-full gap-2">
+              <button
+                onClick={() => setLeave(false)}
+                className="w-1/4 py-2 rounded-md transition-all duration-300 
+         hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]
+         active:scale-[0.98] uppercase tracking-wider hover:rounded-lg cursor-pointer"
+              >
+                CANCEL
+              </button>
+              <button
+                onClick={handleLeaveRoom}
+                className="w-1/4  py-2 rounded-md transition-all duration-300 
+         hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]
+         active:scale-[0.98] uppercase tracking-wider] hover:rounded-lg cursor-pointer"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <div className="flex justify-between items-center">
-        <h1 className="text-4xl text-white font-[VT323] uppercase mb-8">
+      <div className="flex justify-between p-4 items-center">
+        <h1 className="text-3xl sm:text-5xl text-white font-[VT323] uppercase">
           {roomName}
         </h1>
         {
           members.includes(user._id) && <button
           onClick={handleLeave}
-          className="mb-8 w-1/5 border-2 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer h-2/3"  
+          className="mb-8 w-[20%] border-2 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer h-[50%]"  
         >
           Leave Room
         </button>
         }
       </div>
-      <div className="text-white overflow-y-auto h-[80vh] flex flex-col-reverse gap-1">
+      <div className="text-white overflow-y-auto h-[80vh] sm:h-[80vh] flex flex-col-reverse gap-2 p-2 sm:px-8">
         <div ref={chatEndRef} />
         {members.includes(user._id) && previousMessages
           .slice()
@@ -210,7 +236,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                     ? "ml-auto justify-end"
                     : "mr-auto justify-start"
                 }`}
-                onContextMenu={(e) => handleContextClick(e, m._id)}
+                onContextMenu={(e) => handleContextMenu(e, m._id)}
               >
                 <div className="text-xs text-[var(--color-accent)]">
                   {m.sentBy.username}
@@ -253,29 +279,31 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       {isJoined ? (
         <form
           onSubmit={handleSubmit}
-          className="flex gap-3 justify-start items-start mt-4 "
+          className="flex h-auto gap-3 items-center pl-2 pb-3"
         >
           <div className="flex gap-2">
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               type="text"
-              className="h-10 w-[60vw] p-4 border-2 text-white rounded-sm"
+              className="h-10 w-[75vw] sm:w-[60vw] bg-[var(--color-input-bg)] px-4 py-6 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]
+         focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)]
+         backdrop-blur-md text-white rounded-lg"
               placeholder="Type your message..."
             />
 
             <button
               type="submit"
-              className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center p-2 border-2 text-black rounded-sm"
+              className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center p-2 border-2 text-black rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
             >
-              <SendHorizonal />
+              <SendHorizontal />
             </button>
           </div>
         </form>
       ) : (
         <button
           onClick={handleJoinRoom}
-          className="w-[60vw] h-[6vh] font-medium cursor-pointer rounded-lg bg-[#161b21] border-2 hover:bg-[var(--color-hover-bg)]"
+          className="w-[60vw] h-[6vh] ml-15 mb-4 font-medium cursor-pointer rounded-lg bg-[#161b21] border-2 hover:bg-[var(--color-hover-bg)]"
         >
           Join Now
         </button>

@@ -22,7 +22,7 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
-  const [openSettings, setOpenSettings] = useState(false)
+  const [openSettings, setOpenSettings] = useState(false);
   const [showMobileChat, setShowMobileChat] = useState(false);
   const [id, setId] = useState("");
   const [rooms, setRooms] = useState([]);
@@ -31,33 +31,33 @@ function Home() {
   // console.log("Rendering Home with id:", id);
   const [user, setUser] = useState({});
   useEffect(() => {
-      const storedToken = localStorage.getItem("authToken");
-      if (storedToken) {
-          setToken(storedToken);
-      }
+    const storedToken = localStorage.getItem("authToken");
+    if (storedToken) {
+      setToken(storedToken);
+    }
   }, []);
 
   useEffect(() => {
-      if (token) {
-          getUser();
-      }
+    if (token) {
+      getUser();
+    }
   }, [token]);
 
   async function getUser() {
-      try {
-          if (!token) return; 
-          const res = await axios.get(`${VITE_BASE_URL}/user/profile`, {
-              headers: {
-                  Authorization: `Bearer ${token}`,
-                  "Content-Type": "application/json",
-              },
-          });
-          setUser(res.data); 
-          console.log("User fetched:", res.data);
-          // console.log(rooms);
-      } catch (error) {
-          console.log("Error fetching user:", error);
-      }
+    try {
+      if (!token) return;
+      const res = await axios.get(`${VITE_BASE_URL}/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setUser(res.data);
+      console.log("User fetched:", res.data);
+      // console.log(rooms);
+    } catch (error) {
+      console.log("Error fetching user:", error);
+    }
   }
 
   useEffect(() => {
@@ -71,7 +71,7 @@ function Home() {
       }
     };
     allRooms();
-  }, [])
+  }, []);
   const handleRoomSelect = (room) => {
     setSelectedRoom(room);
     setShowMobileChat(true);
@@ -115,38 +115,65 @@ function Home() {
             </div>
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="p-2 hover:bg-[#2a3347] rounded-lg transition-colors"
+              className="p-2 hover:bg-[var(--color-input-bg)] rounded-xl transition-colors"
             >
-              <Settings className={`w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 ${showSettings? "rotate-90": ""}`} onClick={() => setOpenSettings(true)}/>
+              <Settings
+                className={`w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 ${
+                  showSettings ? "rotate-90" : ""
+                }`}
+                onClick={() => setOpenSettings(true)}
+              />
             </button>
           </div>
 
           {showSettings && (
-              <Setting isOpen={openSettings} onClose={()=> setOpenSettings(false)} randomName={user.username} token={token}/>
-         )} 
+            <Setting
+              isOpen={openSettings}
+              onClose={() => setOpenSettings(false)}
+              randomName={user.username}
+              token={token}
+            />
+          )}
         </div>
 
-        <div className="p-4">
+        <div className="px-1 py-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-tertiary)]" />
             <input
               type="text"
               placeholder="Search rooms..."
-              className="w-full bg-[#0a0f1e] border border-[#2a3347] rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-[#00ffff] transition-colors"
+              className="input-field focus:border-none border-b-accent w-full h-10 rounded-lg !pl-[1rem] transition-colors"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
-        <div className="flex">
-          <button onClick={() => setActiveTab("all")} className={`!w-[50%] cursor-pointer py-2 rounded-lg ${activeTab === "all" ? "bg-[var(--color-hover-bg)]" : "bg-[#161b21]"}`}>All Rooms</button>
-          <button onClick={() => setActiveTab("my")} className={`!w-[50%] cursor-pointer py-2 rounded-lg ${activeTab === "my" ? "bg-[var(--color-hover-bg)]" : "bg-[#161b21]"}`}>My Rooms</button>
+        <div className="flex px-1">
+          <button
+            onClick={() => setActiveTab("all")}
+            className={`!w-[50%] cursor-pointer py-2 rounded-lg ${
+              activeTab === "all"
+                ? "bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                : "bg-[#161b21]"
+            }`}
+          >
+            All Rooms
+          </button>
+          <button
+            onClick={() => setActiveTab("my")}
+            className={`!w-[50%] cursor-pointer py-2 rounded-lg ${
+              activeTab === "my"
+                ? "bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                : "bg-[#161b21]"
+            }`}
+          >
+            My Rooms
+          </button>
         </div>
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-2">
-            {displayRooms.map((room, index) => (
-              room.members.length > 0 && (
-                <div
+            {displayRooms.map((room) => (
+              <div
               key={room._id}
               className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
               onClick={() => handleRoomSelect(room)}
@@ -174,12 +201,11 @@ function Home() {
                 <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
                   <Clock className="w-3 h-3" />
                   <span className=" [var(--color-text-tertiary)]">
-                    {moment(room.createdAt).fromNow()}
+                    {room.timeLeft}
                   </span>
                 </div>
               </div>
             </div>
-              )
             ))}
           </div>
         </div>
@@ -190,9 +216,10 @@ function Home() {
             </button> */}
           <button
             onClick={() => {
-              navigate("/join")
+              navigate("/join");
             }}
-            className="plus-button group-hover:animate-pulse  relative">
+            className="plus-button group-hover:animate-pulse  relative"
+          >
             <Plus className="w-4 h-4 absolute top-4 left-35" />
             <div>Create Room</div>
           </button>
@@ -201,23 +228,20 @@ function Home() {
 
       {/* Main Content */}
       <div
-        className={`flex-1 h-[100vh] ${
-          !showMobileChat ? "hidden md:flex" : "flex"
-        } flex-col`}
+        className={`h-[100vh] ${!showMobileChat ? "hidden md:flex" : "flex"}`}
       >
         {/* Mobile Header */}
-        <div className="md:hidden p-2 border-b border-[#2a3347] bg-[#141b2d]/80">
+        <div className="md:hidden pt-6 pl-2 text-center border-b border-[#2a3347]">
           <button
             onClick={handleBackToRooms}
             className="flex items-center gap-2 text-[#00ffff]"
           >
             <ArrowLeft className="w-5 h-5" />
-            Back to Rooms
           </button>
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 p-8 flex items-center justify-center bg-[#161b21]">
+        <div className="flex-1 p-8 flex items-center justify-center">
           {selectedRoom ? (
             // <div className="text-center">
             //   <h2 className="text-2xl font-bold mb-4">{selectedRoom.name}</h2>
@@ -225,7 +249,12 @@ function Home() {
             //     chat area.....
             //   </p>
             // </div>
-            <ChatRoom id={id} roomName = {selectedRoom.name} user = {user} members = {selectedRoom.members}/>
+            <ChatRoom
+              id={id}
+              roomName={selectedRoom.name}
+              user={user}
+              members={selectedRoom.members}
+            />
           ) : (
             <div className="text-center space-y-4">
               <Ghost className="w-20 h-20 text-[var(--color-accent)] mx-auto mb-4 motion-safe:animate-bounce" />

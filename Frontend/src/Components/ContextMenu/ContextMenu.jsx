@@ -1,10 +1,10 @@
-import { InfoIcon, Eye, EditIcon, DeleteIcon } from "lucide-react";
+import { Info, Edit, Trash} from "lucide-react";
 import "../Settings/settings.css";
 import { useState } from "react";
 import PropTypes from 'prop-types';
 import EditContent from "./EditContent";
 import DeleteContent from "./DeleteContent";
-import Info from "./Info";
+import InfoContent from "./InfoContent";
 import MenuModal from "./MenuModal";
 const ContextMenu = ({messageId}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +20,7 @@ const ContextMenu = ({messageId}) => {
         setModalContent(<DeleteContent  messageId={{messageId}}/>);
         break;
       case "info":
-        setModalContent(<Info />);
+        setModalContent(<InfoContent />);
         break;
       default:
         setModalContent(null);
@@ -33,15 +33,15 @@ const ContextMenu = ({messageId}) => {
         className={`z-20 w-35 px-2 py-3 rounded-md bg-[#161e26] text-neutral-300 flex-col`}
       >
         <button className="settings-button mb-1"  onClick={() => openModal("info")}>
-          <InfoIcon className="settings-icons" />
+          <Info className="settings-icons" />
           <div>Info</div>
         </button>
         <button className="settings-button mb-1"  onClick={() => openModal("edit")}>
-          <EditIcon className="settings-icons" />
+          <Edit className="settings-icons" />
           <div>Edit</div>
         </button>
         <button className="settings-button"  onClick={() => openModal("delete")}>
-          <DeleteIcon className="settings-icons" />
+          <Trash className="settings-icons" />
           <div>Delete</div>
         </button>
       </div>
