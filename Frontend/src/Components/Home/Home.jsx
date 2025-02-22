@@ -14,7 +14,6 @@ import Setting from "../Settings/Setting";
 import { generate } from "random-words";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import moment from "moment";
 function Home() {
   const [token, setToken] = useState("");
   const location = useLocation();
@@ -115,7 +114,7 @@ function Home() {
             </div>
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="p-2 hover:bg-[var(--color-input-bg)] rounded-xl transition-colors"
+              className="p-2 hover:bg-[#2a3347] rounded-lg transition-colors"
             >
               <Settings
                 className={`w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 ${
@@ -136,24 +135,24 @@ function Home() {
           )}
         </div>
 
-        <div className="px-1 py-2">
+        <div className="p-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-tertiary)]" />
             <input
               type="text"
               placeholder="Search rooms..."
-              className="input-field focus:border-none border-b-accent w-full h-10 rounded-lg !pl-[1rem] transition-colors"
+              className="w-full bg-[#0a0f1e] border border-[#2a3347] rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-[#00ffff] transition-colors"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
-        <div className="flex px-1">
+        <div className="flex">
           <button
             onClick={() => setActiveTab("all")}
             className={`!w-[50%] cursor-pointer py-2 rounded-lg ${
               activeTab === "all"
-                ? "bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                ? "bg-[var(--color-hover-bg)]"
                 : "bg-[#161b21]"
             }`}
           >
@@ -162,9 +161,7 @@ function Home() {
           <button
             onClick={() => setActiveTab("my")}
             className={`!w-[50%] cursor-pointer py-2 rounded-lg ${
-              activeTab === "my"
-                ? "bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                : "bg-[#161b21]"
+              activeTab === "my" ? "bg-[var(--color-hover-bg)]" : "bg-[#161b21]"
             }`}
           >
             My Rooms
@@ -172,41 +169,47 @@ function Home() {
         </div>
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-2">
-            {displayRooms.map((room) => (
-              <div
-              key={room._id}
-              className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
-              onClick={() => handleRoomSelect(room)}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
-                  {room.name}
-                </h3>
-                <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
-                  <Users className="w-4 h-4" />
-                  <span>{room.members.length}</span>
+            {displayRooms
+              .filter((item) => {
+                return item.name
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase());
+              })
+              .map((room) => (
+                <div
+                  key={room._id}
+                  className="p-3 rounded-lg hover:bg-[var(--color-hover-bg)] cursor-pointer transition-colors group"
+                  onClick={() => handleRoomSelect(room)}
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
+                      {room.name}
+                    </h3>
+                    <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
+                      <Users className="w-4 h-4" />
+                      <span>{room.members.length}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-1 flex-wrap">
+                      {room.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="text-xs px-2 pb-1.5 pt-1 rounded-full bg-[var(--color-input-bg)] text-[var(--color-text-tertiary)]"
+                        >
+                          {`#${tag}`}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
+                      <Clock className="w-3 h-3" />
+                      <span className=" [var(--color-text-tertiary)]">
+                        {room.timeLeft}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center justify-between">
-              <div className="flex gap-1 flex-wrap">
-                    {room.tags.map((tag, index) => (
-                      <span
-                      key={index}
-                      className="text-xs px-2 pb-1.5 pt-1 rounded-full bg-[var(--color-input-bg)] text-[var(--color-text-tertiary)]"
-                    >
-                      {`#${tag}`}
-                    </span>
-                    ))}
-                </div>
-                <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
-                  <Clock className="w-3 h-3" />
-                  <span className=" [var(--color-text-tertiary)]">
-                    {room.timeLeft}
-                  </span>
-                </div>
-              </div>
-            </div>
-            ))}
+              ))}
           </div>
         </div>
 
@@ -228,15 +231,18 @@ function Home() {
 
       {/* Main Content */}
       <div
-        className={`h-[100vh] ${!showMobileChat ? "hidden md:flex" : "flex"}`}
+        className={`flex-1 h-[100vh] ${
+          !showMobileChat ? "hidden md:flex" : "flex"
+        } flex-col`}
       >
         {/* Mobile Header */}
-        <div className="md:hidden pt-6 pl-2 text-center border-b border-[#2a3347]">
+        <div className="md:hidden p-2 border-b border-[#2a3347] bg-[#141b2d]/80">
           <button
             onClick={handleBackToRooms}
             className="flex items-center gap-2 text-[#00ffff]"
           >
             <ArrowLeft className="w-5 h-5" />
+            Back to Rooms
           </button>
         </div>
 
