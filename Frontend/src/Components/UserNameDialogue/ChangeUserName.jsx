@@ -4,7 +4,7 @@ import "./changeuser.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const ChangeUserName = ({ randomName, isOpen, onClose }) => {
-  const VITE_BASE_URL = "http://localhost:3000";
+  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
   const [username, setUsername] = useState(randomName);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();

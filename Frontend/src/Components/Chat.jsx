@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {io} from "socket.io-client";
 const Chat = () => {
-  const socket = useMemo(() => io("http://localhost:3000"), [])
+  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
+  const socket = useMemo(() => io(VITE_BASE_URL), [])
   const [message, setMessage] = useState("")
   useEffect(() => {
     socket.on("connect", () => {

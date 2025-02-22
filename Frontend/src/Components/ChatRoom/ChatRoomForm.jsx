@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 export const ChatRoomForm = () => {
-  const VITE_BASE_URL = "http://localhost:3000";
+  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
   const [tags, setTags] = useState([]);
   const [tag, setTag] = useState("");
   const [addTag, setAddTag] = useState(false);

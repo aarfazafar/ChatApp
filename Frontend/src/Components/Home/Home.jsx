@@ -14,11 +14,11 @@ import Setting from "../Settings/Setting";
 import { generate } from "random-words";
 import axios from "axios";
 import moment from "moment";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 function Home() {
   const [token, setToken] = useState("");
   const location = useLocation();
-  const VITE_BASE_URL = "http://localhost:3000";
+  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSettings, setShowSettings] = useState(false);

@@ -9,7 +9,7 @@ import Home from './Components/Home/Home';
 import ChatRoom from './Components/ChatRoom/ChatRoom';
 import { ChatRoomForm } from './Components/ChatRoom/ChatRoomForm';
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
@@ -41,7 +41,6 @@ function App() {
               <Route path='/' element={<LandingPage/>}/>
               <Route path="/register" element={<Register />} />
               <Route path="/home" element={<Home/>} />
-              {/* <Route path="/chat" element={<Chat/>} /> */}
               <Route path="/chatroom" element={<ChatRoom/>} />
               <Route path="/join" element={<ChatRoomForm/>} />
             </Routes>

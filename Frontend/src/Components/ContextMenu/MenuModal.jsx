@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { motion } from "framer-motion";
-// import { Cross } from "lucide-react";
 const MenuModal = ({ isOpen, onClose, children }) => {
   useEffect(() => {
     const handleEsc = (event) => {
@@ -39,5 +39,9 @@ const MenuModal = ({ isOpen, onClose, children }) => {
     </div>
   );
 };
-
+MenuModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  children: PropTypes.node,
+};
 export default MenuModal;

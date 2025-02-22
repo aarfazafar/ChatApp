@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { io } from "socket.io-client";
-import { IdCardIcon, SendHorizontal } from "lucide-react";
+import { SendHorizontal } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Linkify from "react-linkify";
 import ContextMenu from "../ContextMenu/ContextMenu";
 const ChatRoom = ({ id, roomName, user, members }) => {
-  const VITE_BASE_URL = "http://localhost:3000";
+  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
   const [socket, setSocket] = useState(null);
   const [message, setMessage] = useState("");
   const [previousMessages, setPreviousMessages] = useState([]);
