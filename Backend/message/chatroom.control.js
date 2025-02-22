@@ -45,7 +45,7 @@ module.exports.joinChatroom = async (req, res) => {
 
 module.exports.getRooms = async (req, res) => {
   try {
-    const rooms = await chatroomModel.find();
+    const rooms = await chatroomModel.find().sort({createdAt: -1});
     res.json(rooms);
   } catch (error) {
     console.log(error);
@@ -59,10 +59,26 @@ module.exports.leaveRoom = async (req, res) => {
     return res.status(400).json({error: "UserId and RoomId required"});
   }
 
-  await chatroomModel.updateOne(
-    {_id: roomId},
-    {$pull: {members: userId}}
-  ).then(res.status(200).json({message: `${userId} left room`}))
+  try {
+    const updatedRoom = await chatroomModel.findOneAndUpdate(
+        { _id: roomId },
+        { $pull: { members: userId } },
+        { new: true }  
+    );
+
+    if (!updatedRoom) {
+        return res.status(404).json({ error: "Room not found" });
+    }
+    if (updatedRoom.members.length === 0) {
+        await chatroomModel.findByIdAndDelete(roomId);
+        return res.status(200).json({ message: `Room deleted as it had no members` });
+    }
+
+    return res.status(200).json({ message: `${userId} left the room` });
+} catch (error) {
+    console.error("Error leaving room:", error);
+    return res.status(500).json({ error: "Internal server error" });
+}
 }
 
 module.exports.getRoomInfo = async (req, res) => {
