@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const MONGO_URL = "mongodb+srv://tanweerjamal833:oSE9g7oLTUBlsrjV@letschat.0z1pv.mongodb.net/user";
+const MONGO_URL = process.env.MONGO_URL;
 function connectToDB () {
     mongoose.connect(MONGO_URL).then(() => {
         console.log('Connected to MongoDB');

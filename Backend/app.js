@@ -6,8 +6,9 @@ app.use(express.urlencoded({ extended: true }));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const cors = require('cors');
+const FRONTEND = process.env.VITE_FRONTEND_URL;
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: FRONTEND,
     credentials: true
 }));
 
