@@ -13,6 +13,7 @@ import ChatRoom from "../ChatRoom/ChatRoom";
 import Setting from "../Settings/Setting";
 import { generate } from "random-words";
 import axios from "axios";
+import moment from "moment"
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 function Home() {
   const [token, setToken] = useState("");
@@ -204,7 +205,7 @@ function Home() {
                     <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
                       <Clock className="w-3 h-3" />
                       <span className=" [var(--color-text-tertiary)]">
-                        {room.timeLeft}
+                        {moment(room.createdAt).fromNow()}
                       </span>
                     </div>
                   </div>
