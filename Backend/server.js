@@ -5,7 +5,14 @@ const { createServer } = require("http");
 
 const cors = require("cors");
 const messageModel = require("./message/message.model");
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://faceless-f9yz.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Authorization"],
+    credentials: true,
+  })
+);
 
 const server = createServer(app);
 const FRONTEND = process.env.VITE_FRONTEND_URL;
@@ -13,6 +20,7 @@ const io = new Server(server, {
   cors: {
     origin: "https://faceless-f9yz.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Authorization"],
     credentials: true,
   },
 });
@@ -64,8 +72,6 @@ io.on("connection", (socket) => {
     console.log(`User ${socket.id} left room ${roomId}`);
   });
 
-
-
   socket.on("delete-message", async (chatid) => {
     try {
       console.log(`Message ${chatid} deleted`);
@@ -73,7 +79,6 @@ io.on("connection", (socket) => {
       console.log("Error deleting message:", error);
     }
   });
-  
 });
 
 server.listen(port, () => {
