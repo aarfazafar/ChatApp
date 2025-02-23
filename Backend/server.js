@@ -7,7 +7,7 @@ const cors = require("cors");
 const messageModel = require("./message/message.model");
 app.use(
   cors({
-    origin: "https://faceless-f9yz.vercel.app",
+    origin: ["https://faceless-f9yz.vercel.app", "https://faceless-shadowspeakshere.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true,
@@ -18,11 +18,12 @@ const server = createServer(app);
 const FRONTEND = process.env.VITE_FRONTEND_URL;
 const io = new Server(server, {
   cors: {
-    origin: "https://faceless-f9yz.vercel.app",
+    origin: ["https://faceless-f9yz.vercel.app", "https://faceless-shadowspeakshere.vercel.app"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true,
   },
+  transports: ["websocket", "polling"],
 });
 
 io.on("connection", (socket) => {
