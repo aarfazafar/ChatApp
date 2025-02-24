@@ -57,6 +57,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       .then(()=> {
         if (socket) {
           socket.emit("join-room", id);
+          isJoined = true;
         }     
         if (id) {
           fetchMessages();
