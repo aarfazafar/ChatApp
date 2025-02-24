@@ -8,7 +8,7 @@ app.use(cookieParser());
 const cors = require('cors');
 const FRONTEND = process.env.VITE_FRONTEND_URL;
 app.use(cors({
-    origin: "https://faceless-f9yz.vercel.app",
+    origin: FRONTEND,
     credentials: true
 }));
 
