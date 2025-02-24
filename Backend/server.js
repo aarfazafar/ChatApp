@@ -2,12 +2,13 @@ const port = process.env.PORT || 3000;
 const app = require("./app");
 const { Server } = require("socket.io");
 const { createServer } = require("http");
+const FRONTEND = process.env.VITE_FRONTEND_URL  || "http://localhost:5173";
 
 const cors = require("cors");
 const messageModel = require("./message/message.model");
 app.use(
   cors({
-    origin: ["https://faceless-f9yz.vercel.app", "https://faceless-shadowspeakshere.vercel.app"],
+    origin:FRONTEND,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true,
@@ -15,10 +16,9 @@ app.use(
 );
 
 const server = createServer(app);
-const FRONTEND = process.env.VITE_FRONTEND_URL;
 const io = new Server(server, {
   cors: {
-    origin: ["https://faceless-f9yz.vercel.app", "https://faceless-shadowspeakshere.vercel.app"],
+    origin: FRONTEND,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true,
