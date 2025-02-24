@@ -40,7 +40,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   };
 
   const handleJoinRoom = async (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     const token = localStorage.getItem("authToken");
     console.log(id)
     await axios
