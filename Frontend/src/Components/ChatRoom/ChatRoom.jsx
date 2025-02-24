@@ -41,13 +41,19 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           },
         }
       )
-      .then(console.log(`user ${user.username} join room ${id} successfully`))
+      .then(()=> {
+        if (socket) {
+          socket.emit("join-room", id);
+        }     
+        console.log(`user ${user.username} join room ${id} successfully`)  
+      })
       .catch((error) => {
         console.error("Error:", error);
         // alert(error.response.data.message);
       });
   };
   useEffect(() => {
+    if(![VITE_BASE_URL]) return;
     const newSocket = io(VITE_BASE_URL);
     setSocket(newSocket);
 
@@ -72,7 +78,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [VITE_BASE_URL]);
 
   useEffect(() => {
     if (socket) {
