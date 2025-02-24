@@ -78,7 +78,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     return () => {
       newSocket.disconnect();
     };
-  }, [VITE_BASE_URL]);
+  }, []);
 
   useEffect(() => {
     if (socket) {
