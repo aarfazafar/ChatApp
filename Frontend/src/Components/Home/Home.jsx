@@ -141,7 +141,7 @@ function Home() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-tertiary)]" />
             <input
               type="text"
-              placeholder="Search rooms..."
+              placeholder="Search room..."
               className="input-field focus:border-none border-b-accent w-full h-10 rounded-lg !pl-[1rem] transition-colors"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

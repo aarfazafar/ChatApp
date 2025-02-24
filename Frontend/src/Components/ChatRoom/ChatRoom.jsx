@@ -316,6 +316,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         </form>
       ) : (
         <button
+        type="button"
           onClick={handleJoinRoom}
           className="w-[60vw] h-[6vh] ml-15 mb-4 font-medium cursor-pointer rounded-lg bg-[#161b21] border-2 hover:bg-[var(--color-hover-bg)]"
         >
