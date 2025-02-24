@@ -29,7 +29,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   const handleJoinRoom = async (e) => {
     // e.preventDefault();
     const token = localStorage.getItem("authToken");
-
+    console.log(id)
     await axios
       .post(
         `${VITE_BASE_URL}/chatrooms/join`,
@@ -41,7 +41,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           },
         }
       )
-      .then(window.location.reload(true))
+      .then(console.log(`user ${user.username} join room ${id} successfully`))
       .catch((error) => {
         console.error("Error:", error);
         // alert(error.response.data.message);
