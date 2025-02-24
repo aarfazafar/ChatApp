@@ -26,6 +26,19 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   });
   const menuRef = useRef(null);
 
+  const fetchMessages = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.get(`${VITE_BASE_URL}/messages/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Fetched messages:", response.data);
+      setPreviousMessages(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  };
+
   const handleJoinRoom = async (e) => {
     // e.preventDefault();
     const token = localStorage.getItem("authToken");
@@ -45,6 +58,9 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         if (socket) {
           socket.emit("join-room", id);
         }     
+        if (id) {
+          fetchMessages();
+        }
         console.log(`user ${user.username} join room ${id} successfully`)  
       })
       .catch((error) => {
@@ -89,19 +105,6 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   }, [id, socket]);
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get(`${VITE_BASE_URL}/messages/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Fetched messages:", response.data);
-        setPreviousMessages(Array.isArray(response.data) ? response.data : []);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    };
-
     if (id) {
       fetchMessages();
     }
