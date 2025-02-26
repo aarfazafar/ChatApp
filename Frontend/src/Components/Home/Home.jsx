@@ -18,7 +18,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 function Home() {
   const [token, setToken] = useState("");
   const location = useLocation();
-  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL = import.meta.env.MODE === "development"
+  ? import.meta.env.VITE_BASE_URL_DEV
+  : import.meta.env.VITE_BASE_URL;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSettings, setShowSettings] = useState(false);

@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 import Linkify from "react-linkify";
 import ContextMenu from "../ContextMenu/ContextMenu";
 const ChatRoom = ({ id, roomName, user, members }) => {
-  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL = import.meta.env.MODE === "development"
+  ? import.meta.env.VITE_BASE_URL_DEV
+  : import.meta.env.VITE_BASE_URL;
   const [socket, setSocket] = useState(null);
   const [message, setMessage] = useState("");
   const [previousMessages, setPreviousMessages] = useState([]);
@@ -70,7 +72,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       });
   };
   useEffect(() => {
-    if(![VITE_BASE_URL]) return;
+    if(!VITE_BASE_URL) return;
     const newSocket = io(VITE_BASE_URL);
     setSocket(newSocket);
 

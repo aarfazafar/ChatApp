@@ -7,7 +7,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ComingSoon from "./ComingSoon";
 const Setting = ({randomName, token}) => {
-  const VITE_BASE_URL =  import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL =  import.meta.env.MODE === "development"
+  ? import.meta.env.VITE_BASE_URL_DEV
+  : import.meta.env.VITE_BASE_URL;
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isThemeOpen, setThemeOpen] = useState(false);
   const navigate = useNavigate();

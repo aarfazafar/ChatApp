@@ -3,7 +3,9 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import PropTypes from "prop-types";
 const DeleteContent = ({ messageId }) => {
-  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL = import.meta.env.MODE === "development"
+  ? import.meta.env.VITE_BASE_URL_DEV
+  : import.meta.env.VITE_BASE_URL;
   const socket = io(VITE_BASE_URL);
   const handleDelete = async (e) => {
     e.preventDefault();

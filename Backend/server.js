@@ -8,7 +8,7 @@ const cors = require("cors");
 const messageModel = require("./message/message.model");
 app.use(
   cors({
-    origin:FRONTEND,
+    origin:[FRONTEND, "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true,
@@ -18,7 +18,7 @@ app.use(
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: FRONTEND,
+    origin: [FRONTEND, "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Authorization"],
     credentials: true,
