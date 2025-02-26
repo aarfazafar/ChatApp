@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import {io} from "socket.io-client";
 const Chat = () => {
-  const VITE_BASE_URL = import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL = import.meta.env.MODE === "development"
+  ? import.meta.env.VITE_BASE_URL_DEV
+  : import.meta.env.VITE_BASE_URL;
   const socket = useMemo(() => io(VITE_BASE_URL), [])
   const [message, setMessage] = useState("")
   useEffect(() => {

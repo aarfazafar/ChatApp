@@ -22,7 +22,9 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const toggleLogin = () => setIsLogin((value) => !value)
-  const VITE_BASE_URL =  import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL =  import.meta.env.MODE === "development"
+  ? import.meta.env.VITE_BASE_URL_DEV
+  : import.meta.env.VITE_BASE_URL;
 
   const handleSubmitRegister = async (e) => {
     e.preventDefault();
