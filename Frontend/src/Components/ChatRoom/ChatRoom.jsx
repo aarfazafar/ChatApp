@@ -59,7 +59,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       .then(()=> {
         if (socket) {
           socket.emit("join-room", id);
-          isJoined = true;
+          // isJoined = true;
         }     
         if (id) {
           fetchMessages();
@@ -116,13 +116,13 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     if (!menu.visible && isUserAtBottom && chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chatEndRef, menu.visible]);
+  }, [isUserAtBottom]);
 
   const checkScrollPosition = () => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
     setIsUserAtBottom(scrollHeight - scrollTop <= clientHeight + 10);
-  };
+  };  
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
