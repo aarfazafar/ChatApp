@@ -8,10 +8,12 @@ import { useNavigate } from "react-router-dom";
 import Linkify from "react-linkify";
 import { format, isToday, isYesterday } from "date-fns";
 import ContextMenu from "../ContextMenu/ContextMenu";
+import ImageModal from "./ImageModal";
 const ChatRoom = ({ id, roomName, user, members }) => {
-  const VITE_BASE_URL = import.meta.env.MODE === "development"
-  ? import.meta.env.VITE_BASE_URL_DEV
-  : import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL =
+    import.meta.env.MODE === "development"
+      ? import.meta.env.VITE_BASE_URL_DEV
+      : import.meta.env.VITE_BASE_URL;
   const [socket, setSocket] = useState(null);
   const [message, setMessage] = useState("");
   const [previousMessages, setPreviousMessages] = useState([]);
@@ -24,6 +26,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   const isJoined = members.includes(user._id);
   const [leave, setLeave] = useState(false);
   const [image, setImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [menu, setMenu] = useState({
     visible: false,
     x: 0,
@@ -48,7 +51,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   const handleJoinRoom = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("authToken");
-    console.log(id)
+    console.log(id);
     await axios
       .post(
         `${VITE_BASE_URL}/chatrooms/join`,
@@ -60,15 +63,15 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           },
         }
       )
-      .then(()=> {
+      .then(() => {
         if (socket) {
           socket.emit("join-room", id);
           // isJoined = true;
-        }     
+        }
         if (id) {
           fetchMessages();
         }
-        console.log(`user ${user.username} join room ${id} successfully`)  
+        console.log(`user ${user.username} join room ${id} successfully`);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -76,7 +79,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       });
   };
   useEffect(() => {
-    if(!VITE_BASE_URL) return;
+    if (!VITE_BASE_URL) return;
     const newSocket = io(VITE_BASE_URL);
     setSocket(newSocket);
 
@@ -126,7 +129,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
     setIsUserAtBottom(scrollHeight - scrollTop <= clientHeight + 10);
-  };  
+  };
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
@@ -150,7 +153,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   //   onDrop,
   // });
   const handleSubmit = (e) => {
-    if(!message && !image) return;
+    if (!message && !image) return;
     e.preventDefault();
     const newMessage = {
       message,
@@ -159,7 +162,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       id,
       timestamp: new Date(),
     };
-    if (socket && message.trim() !== "" || image) {
+    if ((socket && message.trim() !== "") || image) {
       // console.log("Test", user)
       console.log(newMessage);
       socket.emit("message", newMessage);
@@ -170,17 +173,20 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       // console.log("Test", previousMessages);
     }
   };
-  
 
   const sendImage = async (e) => {
-    const file =  e.target.files[0];
+    const file = e.target.files[0];
     const reader = new FileReader(file);
 
     reader.readAsDataURL(file);
     reader.onloadend = async () => {
-      setImage(reader.result)
-    }
-  }
+      setImage(reader.result);
+    };
+  };
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl)
+  };
   const handleContextClick = () => {
     setMenu({ visible: false, x: 0, y: 0, messageId: null });
   };
@@ -232,7 +238,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     const handleScroll = () => {
       if (!chatContainerRef.current) return;
       const children = chatContainerRef.current.children;
-      
+
       for (let child of children) {
         if (child.getBoundingClientRect().top >= 50) {
           setVisibleDate(child.dataset.date);
@@ -251,8 +257,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     <div
       className="flex flex-col justify-between w-full min-h-screen max-h-screen flex-1"
       onClick={handleContextClick}
-    > 
-        
+    >
       {leave && (
         <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen bg-transparent">
           <div
@@ -304,53 +309,58 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         {members.includes(user._id) &&
           groupedArray.map(([date, msgs]) => (
             <>
-              
-              {msgs.slice().reverse().map((msg, i, arr) => {
-                const isLastMessage = i === arr.length - 1;
-                const isNewUser =
-                isLastMessage || arr[i + 1]?.sentBy._id !== msg.sentBy._id;
+              {msgs
+                .slice()
+                .reverse()
+                .map((msg, i, arr) => {
+                  const isLastMessage = i === arr.length - 1;
+                  const isNewUser =
+                    isLastMessage || arr[i + 1]?.sentBy._id !== msg.sentBy._id;
 
-              return ( <div
-                  key={msg._id}
-                  onContextMenu={(e) => handleContextMenu(e, msg._id)}
-                  className={`w-fit px-1.5 pt-1 max-w-[75%] bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] flex-col rounded-tl-[4px] rounded-tr-[10px] rounded-br-[4px] rounded-bl-[10px] justify-center items-center ${
-                    msg.sentBy._id === user._id ? "ml-auto" : "mr-auto"
-                  }`}
-                >
-                  {isNewUser && (
-                    <div className="text-xs text-[var(--color-accent)]">
-                      {msg.sentBy.username}
-                    </div>
-                  )}
-                  {msg.imageUrl && (
-                    <img
-                      src={msg.imageUrl}
-                      alt="Image"
-                      className="w-auto h-40 rounded-lg shadow-md mb-2"
-                    />
-                  )}
-                  <div className="flex pl-2 pr-2 items-end justify-between mb-0.5">
-                    <Linkify
-                      componentDecorator={(href, text, key) => (
-                        <a
-                          href={href}
-                          key={key}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 underline"
-                        >
-                          {text}
-                        </a>
-                      )}
+                  return (
+                    <div
+                      key={msg._id}
+                      onContextMenu={(e) => handleContextMenu(e, msg._id)}
+                      className={`w-fit px-1.5 pt-1 max-w-[75%] bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] flex-col rounded-tl-[4px] rounded-tr-[10px] rounded-br-[4px] rounded-bl-[10px] justify-center items-center ${
+                        msg.sentBy._id === user._id ? "ml-auto" : "mr-auto"
+                      }`}
                     >
-                      <span className="mb-1">{msg.text}</span>
-                    </Linkify>
-                    <span className="text-gray-500 text-xs ml-3 ali">
-                     {format(msg.sentAt, "h:mm a")}
-                    </span>
-                  </div>
-                </div>
-                )})}
+                      {isNewUser && (
+                        <div className="text-xs text-[var(--color-accent)]">
+                          {msg.sentBy.username}
+                        </div>
+                      )}
+                      {msg.imageUrl && (
+                        <img
+                          src={msg.imageUrl}
+                          alt="Image"
+                          className="w-auto h-40 rounded-lg shadow-md mb-2"
+                          onClick={() => handleImageClick(msg.imageUrl)}
+                        />
+                      )}
+                      <div className="flex pl-2 pr-2 items-end justify-between mb-0.5">
+                        <Linkify
+                          componentDecorator={(href, text, key) => (
+                            <a
+                              href={href}
+                              key={key}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 underline"
+                            >
+                              {text}
+                            </a>
+                          )}
+                        >
+                          <span className="mb-1">{msg.text}</span>
+                        </Linkify>
+                        <span className="text-gray-500 text-xs ml-3 ali">
+                          {format(msg.sentAt, "h:mm a")}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               <div
                 key={date}
                 data-date={date}
@@ -376,16 +386,16 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           className="flex-col h-auto gap-3 items-center pl-2 pb-3"
         >
           {image && (
-              <div className="relative ml-2">
-                <img src={image} alt="Preview" className="h-60 rounded" />
-                <button
-                  className="absolute top-0 right- cursor-pointer !text-white"
-                  onClick={() => setImage(null)}
-                >
-                  <X/>
-                </button>
-              </div>
-            )}
+            <div className="relative ml-2">
+              <img src={image} alt="Preview" className="h-60 rounded" />
+              <button
+                className="absolute top-0 right- cursor-pointer !text-white"
+                onClick={() => setImage(null)}
+              >
+                <X />
+              </button>
+            </div>
+          )}
           <div className="relative flex gap-2 items-center pl-2 pr-4">
             <input
               value={message}
@@ -394,25 +404,25 @@ const ChatRoom = ({ id, roomName, user, members }) => {
               className="flex-1 h-12 bg-[var(--color-input-bg)] pl-12 pr-2 py-5 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)] backdrop-blur-md text-white rounded-lg"
               placeholder="Type your message..."
             />
-             <label for="file"
-
+            <label
+              for="file"
               // {...getRootProps()}
               className="absolute left-4 h-8 w-8  text-[var(--color-text-secondary)] cursor-pointer flex justify-center items-center transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
             >
-              <input 
-              // {...getInputProps()} 
-              type="file"
-              id="file"
-              style={{display:"none"}}
-              accept = "image/jpg,image/jpeg,image/png,image/gif"
-              onChange={sendImage}
+              <input
+                // {...getInputProps()}
+                type="file"
+                id="file"
+                style={{ display: "none" }}
+                accept="image/jpg,image/jpeg,image/png,image/gif"
+                onChange={sendImage}
               />
-              <Link/>
+              <Link />
             </label>
-            
+
             <button
               type="submit"
-               className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center  items-center p-2 border-2 text-black rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
+              className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center  items-center p-2 border-2 text-black rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
             >
               <SendHorizontal />
             </button>
@@ -420,13 +430,14 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         </form>
       ) : (
         <button
-        type="button"
+          type="button"
           onClick={handleJoinRoom}
           className="w-[60vw] h-[6vh] ml-15 mb-4 font-medium cursor-pointer rounded-lg bg-[#161b21] border-2 hover:bg-[var(--color-hover-bg)]"
         >
           Join Now
         </button>
       )}
+      <ImageModal image={selectedImage} onClose={() => setSelectedImage(null)} />
     </div>
   );
 };
