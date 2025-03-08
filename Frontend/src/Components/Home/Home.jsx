@@ -236,7 +236,7 @@ function Home() {
 
       {/* Main Content */}
       <div
-        className={`h-[100vh] ${!showMobileChat ? "hidden md:flex w-[70%] justify-center items-center" : "flex"}`}
+        className={`flex-1 h-[100vh] ${!showMobileChat ? "hidden md:flex w-[70%] justify-center items-center" : "flex"}`}
       >
         {/* Mobile Header */}
         <div className="md:hidden pt-6 pl-2 text-center border-b border-[#2a3347]">

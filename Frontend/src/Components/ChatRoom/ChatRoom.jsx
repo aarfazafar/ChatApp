@@ -136,19 +136,19 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     return () =>
       chatContainer.removeEventListener("scroll", checkScrollPosition);
   }, []);
-  const [file, setFile] = useState(null);
-  const onDrop = useCallback((acceptedFiles) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      setImage(URL.createObjectURL(file));
-    }
-    setFile(file);
-  }, []);
+  // const [file, setFile] = useState(null);
+  // const onDrop = useCallback((acceptedFiles) => {
+  //   const file = acceptedFiles[0];
+  //   if (file) {
+  //     setImage(URL.createObjectURL(file));
+  //   }
+  //   setFile(file);
+  // }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/*",
-    onDrop,
-  });
+  // const { getRootProps, getInputProps } = useDropzone({
+  //   accept: "image/*",
+  //   onDrop,
+  // });
   const handleSubmit = (e) => {
     if(!message && !image) return;
     e.preventDefault();
@@ -166,12 +166,21 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       // setPreviousMessages((prev) => [...prev, newMessage]);
       setMessage("");
       setImage(null);
-      setFile(null);
+      // setFile(null);
       // console.log("Test", previousMessages);
     }
   };
   
 
+  const sendImage = async (e) => {
+    const file =  e.target.files[0];
+    const reader = new FileReader(file);
+
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      setImage(reader.result)
+    }
+  }
   const handleContextClick = () => {
     setMenu({ visible: false, x: 0, y: 0, messageId: null });
   };
@@ -313,11 +322,11 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                       {msg.sentBy.username}
                     </div>
                   )}
-                  {msg.image && (
+                  {msg.imageUrl && (
                     <img
-                      src={msg.image}
+                      src={msg.imageUrl}
                       alt="Image"
-                      className="w-48 h-auto rounded-lg shadow-md mb-2"
+                      className="w-auto h-40 rounded-lg shadow-md mb-2"
                     />
                   )}
                   <div className="flex pl-2 pr-2 items-end justify-between mb-0.5">
@@ -367,31 +376,39 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           className="flex-col h-auto gap-3 items-center pl-2 pb-3"
         >
           {image && (
-              <div className="relative">
-                <img src={image} alt="Preview" className="h-40 w-40 rounded" />
+              <div className="relative ml-2">
+                <img src={image} alt="Preview" className="h-60 rounded" />
                 <button
-                  className="absolute top-0 right- cursor-pointer"
+                  className="absolute top-0 right- cursor-pointer !text-white"
                   onClick={() => setImage(null)}
                 >
                   <X/>
                 </button>
               </div>
             )}
-          <div className="flex gap-2 items-center">
+          <div className="relative flex gap-2 items-center pl-2 pr-4">
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               type="text"
-              className="h-10 w-[75vw] sm:w-[60vw] bg-[var(--color-input-bg)] px-4 py-6 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)] backdrop-blur-md text-white rounded-lg"
+              className="flex-1 h-12 bg-[var(--color-input-bg)] pl-12 pr-2 py-5 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)] backdrop-blur-md text-white rounded-lg"
               placeholder="Type your message..."
             />
-             <div
-              {...getRootProps()}
-              className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center  items-center p-2 border-2 rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
+             <label for="file"
+
+              // {...getRootProps()}
+              className="absolute left-4 h-8 w-8  text-[var(--color-text-secondary)] cursor-pointer flex justify-center items-center transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
             >
-              <input {...getInputProps()} />
+              <input 
+              // {...getInputProps()} 
+              type="file"
+              id="file"
+              style={{display:"none"}}
+              accept = "image/jpg,image/jpeg,image/png,image/gif"
+              onChange={sendImage}
+              />
               <Link/>
-            </div>
+            </label>
             
             <button
               type="submit"

@@ -6,6 +6,7 @@ const messageSchema = new mongoose.Schema({
     },
     imageUrl: {
         type: String,
+        required:false
     },
     sentBy: {
         type: mongoose.Schema.Types.ObjectId,
