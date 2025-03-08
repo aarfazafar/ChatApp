@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
+import { useDropzone } from "react-dropzone";
 import { io } from "socket.io-client";
-import { SendHorizontal } from "lucide-react";
+import { Cross, Link, Pin, SendHorizontal, X } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Linkify from "react-linkify";
+import { format, isToday, isYesterday } from "date-fns";
 import ContextMenu from "../ContextMenu/ContextMenu";
 const ChatRoom = ({ id, roomName, user, members }) => {
   const VITE_BASE_URL = import.meta.env.MODE === "development"
@@ -14,12 +16,14 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   const [message, setMessage] = useState("");
   const [previousMessages, setPreviousMessages] = useState([]);
   const [AllMessages, setAllMessages] = useState([]);
+  const [visibleDate, setVisibleDate] = useState("Today");
   const [isUserAtBottom, setIsUserAtBottom] = useState(true);
   const chatEndRef = React.createRef();
   const chatContainerRef = useRef(null);
   const navigate = useNavigate();
   const isJoined = members.includes(user._id);
   const [leave, setLeave] = useState(false);
+  const [image, setImage] = useState(null);
   const [menu, setMenu] = useState({
     visible: false,
     x: 0,
@@ -132,24 +136,41 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     return () =>
       chatContainer.removeEventListener("scroll", checkScrollPosition);
   }, []);
+  const [file, setFile] = useState(null);
+  const onDrop = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setImage(URL.createObjectURL(file));
+    }
+    setFile(file);
+  }, []);
 
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    onDrop,
+  });
   const handleSubmit = (e) => {
+    if(!message && !image) return;
     e.preventDefault();
-
-    if (socket && message.trim() !== "") {
+    const newMessage = {
+      message,
+      image,
+      sentBy: user,
+      id,
+      timestamp: new Date(),
+    };
+    if (socket && message.trim() !== "" || image) {
       // console.log("Test", user)
-      const newMessage = {
-        message,
-        sentBy: user,
-        id,
-        timestamp: new Date().toLocaleTimeString(),
-      };
+      console.log(newMessage);
       socket.emit("message", newMessage);
       // setPreviousMessages((prev) => [...prev, newMessage]);
       setMessage("");
+      setImage(null);
+      setFile(null);
       // console.log("Test", previousMessages);
     }
   };
+  
 
   const handleContextClick = () => {
     setMenu({ visible: false, x: 0, y: 0, messageId: null });
@@ -185,11 +206,44 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     console.log(response);
     window.location.reload(true);
   };
+  const formatMessageDate = (date) => {
+    if (isToday(date)) return "Today";
+    if (isYesterday(date)) return "Yesterday";
+    return format(date, "EEEE"); // Shows "Monday", "Tuesday", etc.
+  };
+
+  const groupedMessages = previousMessages.reduce((acc, msg) => {
+    const msgDate = formatMessageDate(msg.sentAt);
+    if (!acc[msgDate]) acc[msgDate] = [];
+    acc[msgDate].push(msg);
+    return acc;
+  }, {});
+  const groupedArray = Object.entries(groupedMessages).reverse();
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!chatContainerRef.current) return;
+      const children = chatContainerRef.current.children;
+      
+      for (let child of children) {
+        if (child.getBoundingClientRect().top >= 50) {
+          setVisibleDate(child.dataset.date);
+          break;
+        }
+      }
+    };
+
+    const container = chatContainerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
+    }
+  }, []);
   return (
     <div
-      className="flex flex-col justify-between w-full min-h-screen flex-1"
+      className="flex flex-col justify-between w-full min-h-screen max-h-screen flex-1"
       onClick={handleContextClick}
-    >
+    > 
+        
       {leave && (
         <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen bg-transparent">
           <div
@@ -236,33 +290,37 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           </button>
         )}
       </div>
-
       <div className="text-white overflow-y-auto h-[80vh] sm:h-[80vh] flex flex-col-reverse gap-2 p-2 sm:px-8">
-        <div ref={chatEndRef} />
+        <div ref={chatContainerRef} />
         {members.includes(user._id) &&
-          previousMessages
-            .slice()
-            .reverse()
-            .map((m, i, arr) => {
-              const isLastMessage = i === arr.length - 1;
-              const isNewUser =
-                isLastMessage || arr[i + 1]?.sentBy._id !== m.sentBy._id;
-              return (
-                <div
-                  key={i}
+          groupedArray.map(([date, msgs]) => (
+            <>
+              
+              {msgs.slice().reverse().map((msg, i, arr) => {
+                const isLastMessage = i === arr.length - 1;
+                const isNewUser =
+                isLastMessage || arr[i + 1]?.sentBy._id !== msg.sentBy._id;
+
+              return ( <div
+                  key={msg._id}
+                  onContextMenu={(e) => handleContextMenu(e, msg._id)}
                   className={`w-fit px-1.5 pt-1 max-w-[75%] bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] flex-col rounded-tl-[4px] rounded-tr-[10px] rounded-br-[4px] rounded-bl-[10px] justify-center items-center ${
-                    m.sentBy._id === user._id
-                      ? "ml-auto justify-end"
-                      : "mr-auto justify-start"
+                    msg.sentBy._id === user._id ? "ml-auto" : "mr-auto"
                   }`}
-                  onContextMenu={(e) => handleContextMenu(e, m._id)}
                 >
                   {isNewUser && (
                     <div className="text-xs text-[var(--color-accent)]">
-                      {m.sentBy.username}
+                      {msg.sentBy.username}
                     </div>
                   )}
-                  <div className="flex pl-2 pr-2 items-end justify-between mb-2">
+                  {msg.image && (
+                    <img
+                      src={msg.image}
+                      alt="Image"
+                      className="w-48 h-auto rounded-lg shadow-md mb-2"
+                    />
+                  )}
+                  <div className="flex pl-2 pr-2 items-end justify-between mb-0.5">
                     <Linkify
                       componentDecorator={(href, text, key) => (
                         <a
@@ -276,15 +334,23 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                         </a>
                       )}
                     >
-                      <span className="mb-1">{m.text}</span>
+                      <span className="mb-1">{msg.text}</span>
                     </Linkify>
                     <span className="text-gray-500 text-xs ml-3 ali">
-                      {m.sentAt}
+                     {format(msg.sentAt, "h:mm a")}
                     </span>
                   </div>
                 </div>
-              );
-            })}
+                )})}
+              <div
+                key={date}
+                data-date={date}
+                className=" top-0 w-fit mx-auto bg-gray-500 px-2 text-center text-lg font-semibold shadow-md rounded-lg"
+              >
+                {date}
+              </div>
+            </>
+          ))}
       </div>
       {menu.visible && (
         <div
@@ -298,9 +364,20 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       {isJoined ? (
         <form
           onSubmit={handleSubmit}
-          className="flex h-auto gap-3 items-center pl-2 pb-3"
+          className="flex-col h-auto gap-3 items-center pl-2 pb-3"
         >
-          <div className="flex gap-2">
+          {image && (
+              <div className="relative">
+                <img src={image} alt="Preview" className="h-40 w-40 rounded" />
+                <button
+                  className="absolute top-0 right- cursor-pointer"
+                  onClick={() => setImage(null)}
+                >
+                  <X/>
+                </button>
+              </div>
+            )}
+          <div className="flex gap-2 items-center">
             <input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -308,10 +385,17 @@ const ChatRoom = ({ id, roomName, user, members }) => {
               className="h-10 w-[75vw] sm:w-[60vw] bg-[var(--color-input-bg)] px-4 py-6 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)] backdrop-blur-md text-white rounded-lg"
               placeholder="Type your message..."
             />
-
+             <div
+              {...getRootProps()}
+              className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center  items-center p-2 border-2 rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
+            >
+              <input {...getInputProps()} />
+              <Link/>
+            </div>
+            
             <button
               type="submit"
-               className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center p-2 border-2 text-black rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
+               className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center  items-center p-2 border-2 text-black rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
             >
               <SendHorizontal />
             </button>

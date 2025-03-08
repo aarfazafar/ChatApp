@@ -2,8 +2,10 @@ const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
     text: {
+        type: String
+    },
+    imageUrl: {
         type: String,
-        required: true
     },
     sentBy: {
         type: mongoose.Schema.Types.ObjectId,

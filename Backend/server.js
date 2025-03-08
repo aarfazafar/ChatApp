@@ -37,19 +37,21 @@ io.on("connection", (socket) => {
     console.log("User disconnected", socket.id);
   });
 
-  socket.on("message", async ({ message, sentBy, id, timestamp }) => {
-    if (!id || !message || !sentBy) {
+  socket.on("message", async ({ message, image, sentBy, id, timestamp }) => {
+    if (!id || !sentBy) {
       console.log({ id, message, sentBy });
-      console.error("Missing required fields: room, message, sentBy");
+      console.error("Missing required fields: room, sentBy");
       return;
     }
 
     const newMessage = new messageModel({
       text: message,
+      imageUrl: image,
       sentBy: sentBy,
       room: id,
       sentAt: timestamp,
     });
+    console.log(newMessage);
     const savedMessage = await newMessage.save();
     await savedMessage.populate("sentBy", "username");
     console.log(
