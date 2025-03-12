@@ -2,13 +2,15 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useDropzone } from "react-dropzone";
 import { io } from "socket.io-client";
-import { Cross, Link, Pin, SendHorizontal, X } from "lucide-react";
+import { Cross, Link, Pin, SendHorizontal, X, Smile } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Linkify from "react-linkify";
 import { format, isToday, isYesterday } from "date-fns";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import ImageModal from "./ImageModal";
+import EmojiPicker, { Theme } from "emoji-picker-react";
+
 const ChatRoom = ({ id, roomName, user, members }) => {
   const VITE_BASE_URL =
     import.meta.env.MODE === "development"
@@ -27,14 +29,17 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   const [leave, setLeave] = useState(false);
   const [image, setImage] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [emoji, setEmoji] = useState(false);
   const [menu, setMenu] = useState({
     visible: false,
     x: 0,
     y: 0,
     messageId: null,
   });
+  const [menuSize, setMenuSize] = useState({ width: 0, height: 0 });
   const menuRef = useRef(null);
 
+  const [onDeleteMsg, setOnDeleteMsg] =  useState(false);
   const fetchMessages = async () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -125,6 +130,28 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     }
   }, [isUserAtBottom]);
 
+  useEffect(() => {
+    if (menuRef.current) {
+      setMenuSize({
+        width: menuRef.current.offsetWidth,
+        height: menuRef.current.offsetHeight,
+      });
+    }
+    const container = chatContainerRef.current;
+    if (container) {
+      container.style.overflowY = menu.visible ? "hidden" : "auto";
+    }
+  }, [menu.visible]);
+
+  const adjustedX =
+    menu.x + menuSize.width > window.innerWidth
+      ? menu.x - menuSize.width
+      : menu.x;
+
+  const adjustedY =
+    menu.y + menuSize.height > window.innerHeight
+      ? menu.y - menuSize.height
+      : menu.y;
   const checkScrollPosition = () => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
@@ -168,6 +195,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       socket.emit("message", newMessage);
       // setPreviousMessages((prev) => [...prev, newMessage]);
       setMessage("");
+      setEmoji(false);
       setImage(null);
       // setFile(null);
       // console.log("Test", previousMessages);
@@ -185,7 +213,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   };
 
   const handleImageClick = (imageUrl) => {
-    setSelectedImage(imageUrl)
+    setSelectedImage(imageUrl);
   };
   const handleContextClick = () => {
     setMenu({ visible: false, x: 0, y: 0, messageId: null });
@@ -234,25 +262,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     return acc;
   }, {});
   const groupedArray = Object.entries(groupedMessages).reverse();
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!chatContainerRef.current) return;
-      const children = chatContainerRef.current.children;
-
-      for (let child of children) {
-        if (child.getBoundingClientRect().top >= 50) {
-          setVisibleDate(child.dataset.date);
-          break;
-        }
-      }
-    };
-
-    const container = chatContainerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-      return () => container.removeEventListener("scroll", handleScroll);
-    }
-  }, []);
+  // useEffect(() => {
   return (
     <div
       className="flex flex-col justify-between w-full min-h-screen max-h-screen flex-1"
@@ -304,8 +314,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           </button>
         )}
       </div>
-      <div className="text-white overflow-y-auto h-[80vh] sm:h-[80vh] flex flex-col-reverse gap-2 p-2 sm:px-8">
-        <div ref={chatContainerRef} />
+      <div className="text-white overflow-y-auto h-[80vh] sm:h-[80vh] flex flex-col-reverse gap-2 p-2 sm:px-8" ref={chatContainerRef}>
         {members.includes(user._id) &&
           groupedArray.map(([date, msgs]) => (
             <>
@@ -322,7 +331,9 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                       key={msg._id}
                       onContextMenu={(e) => handleContextMenu(e, msg._id)}
                       className={`w-fit px-1.5 pt-1 max-w-[75%] bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] flex-col justify-center items-center ${
-                        msg.sentBy._id === user._id ? "ml-auto rounded-tl-[12px] rounded-bl-[12px] rounded-br-[12px]" : "mr-auto rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px]"
+                        msg.sentBy._id === user._id
+                          ? "ml-auto rounded-tl-[12px] rounded-bl-[12px] rounded-br-[12px]"
+                          : "mr-auto rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px]"
                       }`}
                     >
                       {isNewUser && (
@@ -375,9 +386,12 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         <div
           ref={menuRef}
           className="absolute w-fit"
-          style={{ top: `${menu.y}px`, left: `${menu.x}px` }}
+          style={{
+            top: `${adjustedY}px`,
+            left: `${adjustedX}px`,
+          }}
         >
-          <ContextMenu messageId={menu.messageId} />
+          <ContextMenu messageId={menu.messageId}/>
         </div>
       )}
       {isJoined ? (
@@ -396,18 +410,35 @@ const ChatRoom = ({ id, roomName, user, members }) => {
               </button>
             </div>
           )}
+          {emoji ? (
+            <div className="pl-2 pb-2 relative" onClose={() => setEmoji(false)}>
+              <EmojiPicker
+                onEmojiClick={(e) => setMessage(message + e.emoji)}
+                theme={Theme.AUTO}
+              />
+              <button
+                className="absolute top-1 left-82 cursor-pointer text-xs p-0.5 bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] opacity-80 !text-[var(--color-text-tertiary)] rounded-full hover:scale-105 active:scale-95 active:brightness-150 z-50"
+                onClick={() => setEmoji(false)}
+              >
+                <X />
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
+
           <div className="relative flex gap-2 items-center pl-2 pr-4">
-            <input
+            <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              type="text"
-              className="flex-1 h-12 bg-[var(--color-input-bg)] pl-12 pr-2 py-5 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)] backdrop-blur-md text-white rounded-lg"
+              // type="text"
+              className="flex-1 h-12 bg-[var(--color-input-bg)] pl-22 pr-2 py-2 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)] backdrop-blur-md text-white rounded-lg"
               placeholder="Type your message..."
             />
             <label
               htmlFor="file"
               // {...getRootProps()}
-              className="absolute left-4 h-8 w-8  text-[var(--color-text-secondary)] cursor-pointer flex justify-center items-center transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)] rounded-full"
+              className="absolute left-4 bottom-2 h-8 w-8  text-[var(--color-text-secondary)] cursor-pointer flex justify-center items-center transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)] rounded-full"
             >
               <input
                 // {...getInputProps()}
@@ -421,8 +452,15 @@ const ChatRoom = ({ id, roomName, user, members }) => {
             </label>
 
             <button
+              type="button"
+              className="absolute left-14 bottom-2 h-8 w-8 !text-[var(--color-text-secondary)] cursor-pointer flex justify-center items-center transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)] rounded-full"
+              onClick={() => setEmoji(!emoji)}
+            >
+              <Smile />
+            </button>
+            <button
               type="submit"
-              className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center  items-center p-2 border-2 text-black rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
+              className="h-10 w-10 rounded-t-full rounded-b-full cursor-pointer flex justify-center items-center p-2 border-2 text-black rounded-sm transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
             >
               <SendHorizontal />
             </button>
@@ -437,7 +475,10 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           Join Now
         </button>
       )}
-      <ImageModal image={selectedImage} onClose={() => setSelectedImage(null)} />
+      <ImageModal
+        image={selectedImage}
+        onClose={() => setSelectedImage(null)}
+      />
     </div>
   );
 };
