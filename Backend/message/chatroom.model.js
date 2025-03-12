@@ -22,6 +22,9 @@ const chatroomSchema = new mongoose.Schema({
     },
     tags: {
         type: [{type: String}],
+    },
+    icon:{
+        type: String,
     }
 });
 

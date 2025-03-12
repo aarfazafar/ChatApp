@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import "../LandingPage/LandingPage.css";
-import { Plus } from "lucide-react";
+import { Plus, Camera } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 export const ChatRoomForm = () => {
-  const VITE_BASE_URL = import.meta.env.MODE === "development"
-  ? import.meta.env.VITE_BASE_URL_DEV
-  : import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL =
+    import.meta.env.MODE === "development"
+      ? import.meta.env.VITE_BASE_URL_DEV
+      : import.meta.env.VITE_BASE_URL;
   const [tags, setTags] = useState([]);
   const [tag, setTag] = useState("");
   const [addTag, setAddTag] = useState(false);
   const [roomName, setRoomName] = useState("");
+  const [icon, setIcon] = useState(null);
+
   const navigate = useNavigate();
   const tagsHandler = (e) => {
     e.preventDefault();
@@ -19,12 +22,13 @@ export const ChatRoomForm = () => {
   const addRoomHandler = async (e) => {
     e.preventDefault();
     console.log(roomName);
+    // console.log(icon)
     const token = localStorage.getItem("authToken");
     console.log(token);
     await axios
       .post(
         `${VITE_BASE_URL}/chatrooms/create`,
-        { name: roomName, tags: tags },
+        { name: roomName, tags: tags, icon:icon },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -48,6 +52,15 @@ export const ChatRoomForm = () => {
     }
     setTag("");
     console.log(tags);
+  };
+
+  const sendIcon = async (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader(file);
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      setIcon(reader.result);
+    };
   };
   return (
     <div className="flex flex-col justify-center items-center h-screen w-screen">
@@ -93,13 +106,45 @@ export const ChatRoomForm = () => {
                 Summon
               </button>
             </div>
-            <button
-              onClick={tagsHandler}
-              className="!flex gap-2 cursor-pointer bg-[#161b21] hover:bg-[var(--color-hover-bg)] !text-gray-300 px-4 py-2 rounded-lg mt-3"
-            >
-              <Plus />
-              Add Tags
-            </button>
+            <div className="flex justify-center gap-2 mt-4">
+              <button
+                onClick={tagsHandler}
+                className="!flex gap-2 cursor-pointer bg-[#161b21] hover:bg-[var(--color-hover-bg)] !text-gray-300 px-4 py-2 rounded-lg"
+              >
+                <Plus />
+                Add Tags
+              </button>
+              {!icon ? (
+                <label
+                  htmlFor="file"
+                  className="px-4 py-2 text-[var(--color-text-secondary)] bg-[#161b21] hover:bg-[var(--color-hover-bg)] cursor-pointer rounded-lg flex justify-center gap-2"
+                >
+                  Group Icon
+                  <input
+                    type="file"
+                    id="file"
+                    style={{ display: "none" }}
+                    accept="image/jpg,image/jpeg,image/png,image/gif"
+                    onChange={sendIcon}
+                  />
+                  <Camera />
+                </label>
+              ) : (
+                <>
+                <img className="w-10 h-10 rounded-full" src={icon} alt="Icon" />
+                  <button
+                    className="w-10 h-10 rounded full text-black"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIcon(null);
+                    }}
+                  >
+                    x
+                  </button>
+                </>
+              )}
+            </div>
+
             <div className="flex w-[100%] translate-y-6 gap-3 overflow-hidden">
               {tags.map((m) => (
                 <div

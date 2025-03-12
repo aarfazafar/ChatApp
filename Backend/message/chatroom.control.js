@@ -1,7 +1,7 @@
 const chatroomModel = require("./chatroom.model");
 
 module.exports.createChatroom = async (req, res) => {
-  const { name, tags } = req.body;
+  const { name, tags, icon } = req.body;
   try {
     const existingRoom = await chatroomModel.findOne({ name });
     if (existingRoom) {
@@ -12,7 +12,8 @@ module.exports.createChatroom = async (req, res) => {
       name,
       members: [req.user._id],
       admin: req.user._id,
-      tags
+      tags,
+      icon
     });
 
     await chatroom.save();

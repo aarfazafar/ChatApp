@@ -405,7 +405,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
               placeholder="Type your message..."
             />
             <label
-              for="file"
+              htmlFor="file"
               // {...getRootProps()}
               className="absolute left-4 h-8 w-8  text-[var(--color-text-secondary)] cursor-pointer flex justify-center items-center transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)] rounded-full"
             >

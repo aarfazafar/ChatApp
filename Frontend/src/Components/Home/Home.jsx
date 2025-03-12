@@ -7,6 +7,8 @@ import {
   Search,
   Settings,
   ArrowLeft,
+  Camera,
+  User
 } from "lucide-react";
 import "./Home.css";
 import ChatRoom from "../ChatRoom/ChatRoom";
@@ -18,9 +20,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 function Home() {
   const [token, setToken] = useState("");
   const location = useLocation();
-  const VITE_BASE_URL = import.meta.env.MODE === "development"
-  ? import.meta.env.VITE_BASE_URL_DEV
-  : import.meta.env.VITE_BASE_URL;
+  const VITE_BASE_URL =
+    import.meta.env.MODE === "development"
+      ? import.meta.env.VITE_BASE_URL_DEV
+      : import.meta.env.VITE_BASE_URL;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -187,9 +190,22 @@ function Home() {
                   onClick={() => handleRoomSelect(room)}
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors">
-                      {room.name}
-                    </h3>
+                    <div className="flex w-auto gap-4">
+                      <div>
+                        {room.icon ? (
+                          <img
+                            className="w-10 h-10 rounded-full"
+                            src={room.icon}
+                            alt="icon"
+                          />
+                        ) : (
+                          <User className="w-8 h-8 rounded-full text-[var(--color-text-secondary)] border-1 border-[var(--color-text-secondary)]"/>
+                        )}
+                      </div>
+                      <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors py-1">
+                        {room.name}
+                      </h3>
+                    </div>
                     <div className="flex items-center gap-1 text-sm text-[var(--color-text-tertiary)]">
                       <Users className="w-4 h-4" />
                       <span>{room.members.length}</span>
@@ -236,7 +252,11 @@ function Home() {
 
       {/* Main Content */}
       <div
-        className={`flex-1 h-[100vh] ${!showMobileChat ? "hidden md:flex w-[70%] justify-center items-center" : "flex"}`}
+        className={`flex-1 h-[100vh] ${
+          !showMobileChat
+            ? "hidden md:flex w-[70%] justify-center items-center"
+            : "flex"
+        }`}
       >
         {/* Mobile Header */}
         <div className="md:hidden pt-6 pl-2 text-center border-b border-[#2a3347]">
