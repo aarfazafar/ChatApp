@@ -101,10 +101,10 @@ function Home() {
     <div className="home-app min-h-screen bg-[#0a0f1e] text-gray-100 flex">
       {/* Sidebar*/}
       <div
-        className={`w-full max-h-screen overflow-hidden lg:w-120 md:w-80 bg-[var(--color-dark-secondary)]/80 backdrop-blur-md border-r border-[#2a3347] flex flex-col 
+        className={`w-full max-h-screen overflow-hidden lg:w-120 md:w-80 bg-[var(--color-dark-secondary)]/80 backdrop-blur-md border-r-2 border-[var(--color-dark-primary)] flex flex-col 
                       ${showMobileChat ? "hidden md:flex" : "flex"}`}
       >
-        <div className="p-4 border-b border-[#2a3347]">
+        <div className="p-4 border-b-2 border-[var(--color-dark-primary)]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Ghost className="w-8 h-8 text-[var(--color-accent)] transition ease-in-out hover:-translate-y-1" />
@@ -117,7 +117,7 @@ function Home() {
             </div>
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="p-2 hover:bg-[var(--color-input-bg)] rounded-xl transition-colors"
+              className="p-2 hover:bg-[var(--color-input-bg)] rounded-full transition-colors"
             >
               <Settings
                 className={`w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 ${
@@ -131,7 +131,7 @@ function Home() {
           {showSettings && (
             <Setting
               isOpen={openSettings}
-              onClose={() => setOpenSettings(false)}
+              onClose={() => setShowSettings(false)}
               randomName={user.username}
               token={token}
             />
@@ -196,7 +196,7 @@ function Home() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="flex gap-1 flex-wrap">
+                    <div className="flex flex-1 gap-1 flex-wrap">
                       {room.tags.map((tag, index) => (
                         <span
                           key={index}
@@ -206,8 +206,8 @@ function Home() {
                         </span>
                       ))}
                     </div>
-                    <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)]">
-                      <Clock className="w-3 h-3" />
+                    <div className="flex items-center gap-1 text-xs [var(--color-text-tertiary)] opacity-80">
+                      {/* <Clock className="w-3 h-3" /> */}
                       <span className=" [var(--color-text-tertiary)]">
                         {moment(room.createdAt).fromNow()}
                       </span>
@@ -218,7 +218,7 @@ function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col align-center justify-center p-4 border-t border-[var(--color-accent)]">
+        <div className="flex flex-col align-center justify-center p-4 border-t-2 border-[var(--color-dark-primary)]">
           {/* <button type="submit" className="submit-button group">
               <span className="group-hover:animate-pulse">Step into the shadows</span>
             </button> */}

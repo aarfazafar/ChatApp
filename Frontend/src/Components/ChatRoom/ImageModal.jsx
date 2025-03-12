@@ -13,7 +13,7 @@ export default function ImageModal({ image, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <button
-          className="absolute top-6 right-6 !text-black hover:text-white"
+          className="absolute top-6 right-6 text-xs p-0.5 bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] opacity-80 !text-[var(--color-text-tertiary)] rounded-full hover:scale-105 active:scale-95 active:brightness-150"
           onClick={onClose}
         >
           <X size={30} />

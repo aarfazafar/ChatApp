@@ -153,8 +153,8 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   //   onDrop,
   // });
   const handleSubmit = (e) => {
-    if (!message && !image) return;
     e.preventDefault();
+    if (!message && !image) return;
     const newMessage = {
       message,
       image,
@@ -259,10 +259,10 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       onClick={handleContextClick}
     >
       {leave && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen bg-transparent">
+        <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen bg-transparent backdrop-brightness-55">
           <div
             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 min-h-64
-       w-[90vw] sm:w-[70vw] md:w-[60vw] lg:w-[40vw] xl:w-[30vw] border-2 border-accent rounded-lg 
+       w-[90vw] sm:w-[70vw] md:w-[60vw] lg:w-[40vw] xl:w-[30vw] border-1 border-accent rounded-lg 
        bg-[#161b21] p-4 sm:p-8 flex flex-col justify-between items-center"
           >
             <h1 className="text-6xl tracking-wide vtFont">Leave Room</h1>
@@ -321,8 +321,8 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                     <div
                       key={msg._id}
                       onContextMenu={(e) => handleContextMenu(e, msg._id)}
-                      className={`w-fit px-1.5 pt-1 max-w-[75%] bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] flex-col rounded-tl-[4px] rounded-tr-[10px] rounded-br-[4px] rounded-bl-[10px] justify-center items-center ${
-                        msg.sentBy._id === user._id ? "ml-auto" : "mr-auto"
+                      className={`w-fit px-1.5 pt-1 max-w-[75%] bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] flex-col justify-center items-center ${
+                        msg.sentBy._id === user._id ? "ml-auto rounded-tl-[12px] rounded-bl-[12px] rounded-br-[12px]" : "mr-auto rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px]"
                       }`}
                     >
                       {isNewUser && (
@@ -334,7 +334,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                         <img
                           src={msg.imageUrl}
                           alt="Image"
-                          className="w-auto h-40 rounded-lg shadow-md mb-2"
+                          className="w-auto h-40 rounded-lg shadow-md mt-0.5 mb-2"
                           onClick={() => handleImageClick(msg.imageUrl)}
                         />
                       )}
@@ -364,7 +364,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
               <div
                 key={date}
                 data-date={date}
-                className=" top-0 w-fit mx-auto bg-gray-500 px-2 text-center text-lg font-semibold shadow-md rounded-lg"
+                className=" top-0 w-fit mx-auto px-3 py-2 bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] text-[var(--color-text-tertiary)] text-center text-sm rounded-lg brightness-110  hover:brightness-130 transition-all duration-200"
               >
                 {date}
               </div>
@@ -389,7 +389,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
             <div className="relative ml-2">
               <img src={image} alt="Preview" className="h-60 rounded" />
               <button
-                className="absolute top-0 right- cursor-pointer !text-white"
+                className="absolute top-1 left-1 cursor-pointer text-xs p-0.5 bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] opacity-80 !text-[var(--color-text-tertiary)] rounded-full hover:scale-105 active:scale-95 active:brightness-150"
                 onClick={() => setImage(null)}
               >
                 <X />
@@ -407,7 +407,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
             <label
               for="file"
               // {...getRootProps()}
-              className="absolute left-4 h-8 w-8  text-[var(--color-text-secondary)] cursor-pointer flex justify-center items-center transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]"
+              className="absolute left-4 h-8 w-8  text-[var(--color-text-secondary)] cursor-pointer flex justify-center items-center transition-all duration-300 hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)] rounded-full"
             >
               <input
                 // {...getInputProps()}

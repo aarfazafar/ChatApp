@@ -48,7 +48,7 @@ const ChangeUserName = ({ randomName, isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center z-50 h-full w-full backdrop-blur-md bg-transparent"
+      className="fixed inset-0 flex items-center justify-center z-50 h-full w-full backdrop-brightness-75 bg-transparent"
       style={{
         backgroundImage: `
       radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%), 
