@@ -5,7 +5,7 @@ export default function ImageModal({ image, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-transparent bg-opacity-10 backdrop-blur-md z-50"
+      className="fixed inset-0 flex items-center justify-center bg-transparent bg-opacity-10 backdrop-brightness-20 z-50"
       onClick={onClose}
     >
       <div

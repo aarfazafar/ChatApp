@@ -10,6 +10,7 @@ import { format, isToday, isYesterday } from "date-fns";
 import ContextMenu from "../ContextMenu/ContextMenu";
 import ImageModal from "./ImageModal";
 import EmojiPicker, { Theme } from "emoji-picker-react";
+import DeleteContent from "../ContextMenu/DeleteContent";
 
 const ChatRoom = ({ id, roomName, user, members }) => {
   const VITE_BASE_URL =
@@ -39,7 +40,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   const [menuSize, setMenuSize] = useState({ width: 0, height: 0 });
   const menuRef = useRef(null);
 
-  const [onDeleteMsg, setOnDeleteMsg] =  useState(false);
+  const [onDeleteMsg, setOnDeleteMsg] = useState(false);
   const fetchMessages = async () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -189,6 +190,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       id,
       timestamp: new Date(),
     };
+
     if ((socket && message.trim() !== "") || image) {
       // console.log("Test", user)
       console.log(newMessage);
@@ -201,6 +203,19 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       // console.log("Test", previousMessages);
     }
   };
+
+  useEffect(() => {
+    if (!socket) return; 
+    socket.on("messageDeleted", (messageId) => {
+      setMessage((prevMessages) =>
+        prevMessages.filter((msg) => msg._id !== messageId)
+      );
+    });
+
+    return () => {
+      socket.off("messageDeleted");
+    };
+  }, []);
 
   const sendImage = async (e) => {
     const file = e.target.files[0];
@@ -216,6 +231,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     setSelectedImage(imageUrl);
   };
   const handleContextClick = () => {
+    // e.stopPropagation()
     setMenu({ visible: false, x: 0, y: 0, messageId: null });
   };
 
@@ -226,7 +242,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       visible: true,
       x: e.clientX,
       y: e.clientY,
-      messageId,
+      messageId: messageId,
     });
   };
 
@@ -270,27 +286,28 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     >
       {leave && (
         <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen bg-transparent backdrop-brightness-55">
-          <div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 min-h-64
-       w-[90vw] sm:w-[70vw] md:w-[60vw] lg:w-[40vw] xl:w-[30vw] border-1 border-accent rounded-lg 
-       bg-[#161b21] p-4 sm:p-8 flex flex-col justify-between items-center"
-          >
-            <h1 className="text-6xl tracking-wide vtFont">Leave Room</h1>
-            <p className="text-lg">Are you sure you want to leave the room?</p>
-            <div className="flex justify-center w-full gap-2">
+      <div
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ] rounded-lg 
+       bg-[var(--color-input-bg)] flex flex-col w-full max-w-[90%] sm:max-w-md justify-between items-center"
+      >
+        <div className="w-full flex flex-col bg-[#161b21] justify-center  p-6 rounded-t-lg ">
+          <h1 className="w-full !text-xl font-semibold mb-2 text-white">
+            Leave Room
+          </h1>
+          <p className="text-[var(--color-text-secondary)] text-sm sm:text-base">
+            Are you sure you want to leave this room?
+          </p>
+        </div>
+            <div className="flex justify-between w-full p-6 py-5 gap-6">
               <button
                 onClick={() => setLeave(false)}
-                className="w-1/4 py-2 rounded-md transition-all duration-300 
-         hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]
-         active:scale-[0.98] uppercase tracking-wider hover:rounded-lg cursor-pointer"
+                className="submit-button !text-xs !sm:text-sm"
               >
                 CANCEL
               </button>
               <button
                 onClick={handleLeaveRoom}
-                className="w-1/4  py-2 rounded-md transition-all duration-300 
-         hover:bg-[rgba(79,255,79,0.1)] hover:shadow-[0_0_30px_rgba(79,255,79,0.3)]
-         active:scale-[0.98] uppercase tracking-wider] hover:rounded-lg cursor-pointer"
+                className="submit-button !text-xs !sm:text-sm"
               >
                 OK
               </button>
@@ -314,7 +331,10 @@ const ChatRoom = ({ id, roomName, user, members }) => {
           </button>
         )}
       </div>
-      <div className="text-white overflow-y-auto h-[80vh] sm:h-[80vh] flex flex-col-reverse gap-2 p-2 sm:px-8" ref={chatContainerRef}>
+      <div
+        className="text-white overflow-y-auto h-[80vh] sm:h-[80vh] flex flex-col-reverse gap-2 p-2 sm:px-8"
+        ref={chatContainerRef}
+      >
         {members.includes(user._id) &&
           groupedArray.map(([date, msgs]) => (
             <>
@@ -391,8 +411,17 @@ const ChatRoom = ({ id, roomName, user, members }) => {
             left: `${adjustedX}px`,
           }}
         >
-          <ContextMenu messageId={menu.messageId}/>
+          <ContextMenu
+            messageId={menu.messageId}
+            onDelete={() => setOnDeleteMsg(true)}
+          />
         </div>
+      )}
+      {onDeleteMsg && (
+        <DeleteContent
+          messageId={menu.messageId}
+          onDelete={() => setOnDeleteMsg(false)}
+        />
       )}
       {isJoined ? (
         <form

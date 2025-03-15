@@ -8,7 +8,7 @@ import {
   Settings,
   ArrowLeft,
   Camera,
-  User
+  User,
 } from "lucide-react";
 import "./Home.css";
 import ChatRoom from "../ChatRoom/ChatRoom";
@@ -123,7 +123,7 @@ function Home() {
               className="p-2 hover:bg-[var(--color-input-bg)] rounded-full transition-colors"
             >
               <Settings
-                className={`w-5 h-5 text-[var(--color-accent)] transition ease-in-out duration-75 ${
+                className={`w-5 h-5 text-[var(--color-text-primary)] transition ease-in-out duration-75 ${
                   showSettings ? "rotate-90" : ""
                 }`}
                 onClick={() => setOpenSettings(true)}
@@ -141,25 +141,37 @@ function Home() {
           )}
         </div>
 
-        <div className="px-1 py-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-tertiary)]" />
+        <div className="px-1 py-2 flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-secondary)]" />
             <input
               type="text"
               placeholder="Search room..."
-              className="input-field focus:border-none border-b-accent w-full h-10 rounded-lg !pl-[1rem] transition-colors"
+              className="bg-transparent border border-[var(--color-input-border)] 
+         rounded-lg focus:outline-none focus:border-2 duration-300
+         text-[var(--color-text-primary)] placeholder:text-[var(--color-text-secondary)] placeholder:opacity-50
+         shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] w-full h-10 !pl-[2rem] transition-colors"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          <button
+            onClick={() => {
+              navigate("/join");
+            }}
+            className="plus-button group-hover:animate-pulse relative"
+          >
+            {/* <Plus className="w-4 h-4 absolute top-4 left-35" /> */}
+            <div>Create New Room</div>
+          </button>
         </div>
         <div className="flex px-1">
           <button
             onClick={() => setActiveTab("all")}
             className={`!w-[50%] cursor-pointer py-2 rounded-lg ${
               activeTab === "all"
-                ? "bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                : "bg-[#161b21]"
+                ? "bg-[var(--color-input-bg)] border-t border-l border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                : "bg-[#161b21] !text-[var(--color-text-primary)]"
             }`}
           >
             All Rooms
@@ -168,8 +180,8 @@ function Home() {
             onClick={() => setActiveTab("my")}
             className={`!w-[50%] cursor-pointer py-2 rounded-lg ${
               activeTab === "my"
-                ? "bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
-                : "bg-[#161b21]"
+                ? "bg-[var(--color-input-bg)] border-t border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)]"
+                : "bg-[#161b21] !text-[var(--color-text-primary)]"
             }`}
           >
             My Rooms
@@ -199,7 +211,7 @@ function Home() {
                             alt="icon"
                           />
                         ) : (
-                          <User className="w-8 h-8 rounded-full text-[var(--color-text-secondary)] border-1 border-[var(--color-text-secondary)]"/>
+                          <User className="w-10 h-10 p-1 rounded-full text-[var(--color-text-secondary)] border-1 border-[var(--color-text-secondary)]" />
                         )}
                       </div>
                       <h3 className="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] transition-colors py-1">
@@ -234,10 +246,8 @@ function Home() {
           </div>
         </div>
 
-        <div className="flex flex-col align-center justify-center p-4 border-t-2 border-[var(--color-dark-primary)]">
-          {/* <button type="submit" className="submit-button group">
-              <span className="group-hover:animate-pulse">Step into the shadows</span>
-            </button> */}
+        {/* <div className="flex flex-col align-center justify-center p-4 border-t-2 border-[var(--color-dark-primary)]">
+
           <button
             onClick={() => {
               navigate("/join");
@@ -247,7 +257,7 @@ function Home() {
             <Plus className="w-4 h-4 absolute top-4 left-35" />
             <div>Create Room</div>
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Main Content */}

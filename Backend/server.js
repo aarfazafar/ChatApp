@@ -75,13 +75,15 @@ io.on("connection", (socket) => {
     console.log(`User ${socket.id} left room ${roomId}`);
   });
 
-  socket.on("delete-message", async (chatid) => {
+  socket.on("deleteMessage", async (messageId) => {
     try {
-      console.log(`Message ${chatid} deleted`);
+      await MessageModel.findByIdAndDelete(messageId);
+      io.emit("messageDeleted", messageId); 
     } catch (error) {
-      console.log("Error deleting message:", error);
+      console.error("Error deleting message:", error);
     }
   });
+  
 });
 
 server.listen(port, () => {
