@@ -7,8 +7,9 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const cors = require('cors');
 const FRONTEND = process.env.VITE_FRONTEND_URL;
+const FRONTEND2 = process.env.VITE_FRONTEND_URL2;
 app.use(cors({
-    origin: [FRONTEND, "http://localhost:5173"],
+    origin: [FRONTEND,FRONTEND2, "http://localhost:5173"],
     credentials: true
 }));
 
