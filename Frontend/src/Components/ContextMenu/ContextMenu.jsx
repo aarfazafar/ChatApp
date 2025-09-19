@@ -30,7 +30,7 @@ const ContextMenu = ({ messageId, onDelete }) => {
   return (
     <>
       <div
-        className={`z-20 w-35 px-2 py-3 rounded-md bg-[#161e26] text-neutral-300 flex-col`}
+        className="context-menu z-20 w-35 px-2 py-3 rounded-md bg-[#161e26] text-neutral-300 flex-col"
       >
         <button
           className="settings-button mb-1"

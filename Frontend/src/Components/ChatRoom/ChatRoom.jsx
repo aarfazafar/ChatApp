@@ -140,19 +140,19 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     }
     const container = chatContainerRef.current;
     if (container) {
-      container.style.overflowY = menu.visible ? "hidden" : "auto";
+      container.style.overflow = menu.visible ? "hidden" : "auto";
     }
   }, [menu.visible]);
 
-  const adjustedX =
-    menu.x + menuSize.width > window.innerWidth
-      ? menu.x - menuSize.width
-      : menu.x;
-
-  const adjustedY =
-    menu.y + menuSize.height > window.innerHeight
-      ? menu.y - menuSize.height
-      : menu.y;
+  const adjustedX = Math.min(
+    menu.x,
+    window.innerWidth - menuSize.width - 10
+  );
+  const adjustedY = Math.min(
+    menu.y,
+    window.innerHeight - menuSize.height - 10
+  );
+  
   const checkScrollPosition = () => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
@@ -278,7 +278,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     return acc;
   }, {});
   const groupedArray = Object.entries(groupedMessages).reverse();
-  // useEffect(() => {
+
   return (
     <div
       className="flex flex-col justify-between w-full min-h-screen max-h-screen flex-1"
@@ -405,7 +405,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       {menu.visible && (
         <div
           ref={menuRef}
-          className="absolute w-fit"
+          className="absolute w-35"
           style={{
             top: `${adjustedY}px`,
             left: `${adjustedX}px`,
@@ -421,6 +421,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         <DeleteContent
           messageId={menu.messageId}
           onDelete={() => setOnDeleteMsg(false)}
+          socket={socket}
         />
       )}
       {isJoined ? (
@@ -461,7 +462,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               // type="text"
-              className="flex-1 h-12 bg-[var(--color-input-bg)] pl-22 pr-2 py-2 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)] backdrop-blur-md text-white rounded-lg"
+              className="flex-1 h-12 min-h-12 bg-[var(--color-input-bg)] pl-22 pr-2 py-2 border border-[var(--color-input-border)] focus:outline-none transition-all duration-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] focus:shadow-[inset_0_2px_4px_rgba(0,0,0,0.3),0_0_20px_rgba(0,255,255,0.2)] backdrop-blur-md text-white rounded-lg"
               placeholder="Type your message..."
             />
             <label

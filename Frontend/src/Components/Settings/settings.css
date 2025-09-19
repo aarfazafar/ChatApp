@@ -5,3 +5,10 @@
 .settings-button {
   @apply w-full flex items-center justify-between gap-3 p-3 hover:bg-[var(--color-hover-bg)] rounded-lg transition-colors cursor-pointer
 }
+@media screen and (max-width: 600px) {
+  .context-menu {
+    max-width: 90vw !important;
+    overflow-x: hidden;
+    font-size: 14px; /* Reduce font size for small screens */
+  }
+}
