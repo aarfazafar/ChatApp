@@ -25,6 +25,17 @@ const chatroomSchema = new mongoose.Schema({
     },
     icon:{
         type: String,
+    },
+    expiryDuration: { // in seconds 
+        type: Number,
+        default: 86400, // default = 24h
+    },
+    expiresAt: {
+        type: Date,
+        default: function () {
+            return new Date(Date.now() + 86400 * 1000); // 24h default
+        },
+        index: { expireAfterSeconds: 0 } // TTL index → Mongo auto-deletes room
     }
 });
 

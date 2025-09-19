@@ -77,6 +77,8 @@ const ChatRoom = ({ id, roomName, user, members }) => {
         if (id) {
           fetchMessages();
         }
+        // isJoined = true;
+        window.location.reload()
         console.log(`user ${user.username} join room ${id} successfully`);
       })
       .catch((error) => {
@@ -124,7 +126,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     if (id) {
       fetchMessages();
     }
-  }, [id]);
+  }, [id, isJoined]);
   useEffect(() => {
     if (!menu.visible && isUserAtBottom && chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -152,7 +154,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     menu.y,
     window.innerHeight - menuSize.height - 10
   );
-  
+
   const checkScrollPosition = () => {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
@@ -205,7 +207,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
   };
 
   useEffect(() => {
-    if (!socket) return; 
+    if (!socket) return;
     socket.on("messageDeleted", (messageId) => {
       setMessage((prevMessages) =>
         prevMessages.filter((msg) => msg._id !== messageId)
@@ -286,18 +288,18 @@ const ChatRoom = ({ id, roomName, user, members }) => {
     >
       {leave && (
         <div className="fixed inset-0 flex items-center justify-center z-50 h-screen w-screen bg-transparent backdrop-brightness-55">
-      <div
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ] rounded-lg 
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ] rounded-lg 
        bg-[var(--color-input-bg)] flex flex-col w-full max-w-[90%] sm:max-w-md justify-between items-center"
-      >
-        <div className="w-full flex flex-col bg-[#161b21] justify-center  p-6 rounded-t-lg ">
-          <h1 className="w-full !text-xl font-semibold mb-2 text-white">
-            Leave Room
-          </h1>
-          <p className="text-[var(--color-text-secondary)] text-sm sm:text-base">
-            Are you sure you want to leave this room?
-          </p>
-        </div>
+          >
+            <div className="w-full flex flex-col bg-[#161b21] justify-center  p-6 rounded-t-lg ">
+              <h1 className="w-full !text-xl font-semibold mb-2 text-white">
+                Leave Room
+              </h1>
+              <p className="text-[var(--color-text-secondary)] text-sm sm:text-base">
+                Are you sure you want to leave this room?
+              </p>
+            </div>
             <div className="flex justify-between w-full p-6 py-5 gap-6">
               <button
                 onClick={() => setLeave(false)}
@@ -350,11 +352,10 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                     <div
                       key={msg._id}
                       onContextMenu={(e) => handleContextMenu(e, msg._id)}
-                      className={`w-fit px-1.5 pt-1 max-w-[75%] bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] flex-col justify-center items-center ${
-                        msg.sentBy._id === user._id
+                      className={`w-fit px-1.5 pt-1 max-w-[75%] bg-[var(--color-input-bg)] border-b border-r border-[var(--color-input-border)] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] flex-col justify-center items-center ${msg.sentBy._id === user._id
                           ? "ml-auto rounded-tl-[12px] rounded-bl-[12px] rounded-br-[12px]"
                           : "mr-auto rounded-tl-[12px] rounded-tr-[12px] rounded-br-[12px]"
-                      }`}
+                        }`}
                     >
                       {isNewUser && (
                         <div className="text-xs text-[var(--color-accent)]">
@@ -383,7 +384,9 @@ const ChatRoom = ({ id, roomName, user, members }) => {
                             </a>
                           )}
                         >
-                          <span className="mb-1">{msg.text}</span>
+                          <span className="mb-1 break-words whitespace-pre-wrap">
+                            {msg.text}
+                          </span>
                         </Linkify>
                         <span className="text-gray-500 text-xs ml-3 ali">
                           {format(msg.sentAt, "h:mm a")}
@@ -405,7 +408,7 @@ const ChatRoom = ({ id, roomName, user, members }) => {
       {menu.visible && (
         <div
           ref={menuRef}
-          className="absolute w-35"
+          className="absolute w-35 z-50"
           style={{
             top: `${adjustedY}px`,
             left: `${adjustedX}px`,

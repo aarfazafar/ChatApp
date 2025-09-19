@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "../LandingPage/LandingPage.css";
-import { Plus, Camera } from "lucide-react";
+import { Plus, Camera, ArrowBigLeft } from "lucide-react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 export const ChatRoomForm = () => {
   const VITE_BASE_URL =
     import.meta.env.MODE === "development"
@@ -13,6 +13,8 @@ export const ChatRoomForm = () => {
   const [addTag, setAddTag] = useState(false);
   const [roomName, setRoomName] = useState("");
   const [icon, setIcon] = useState(null);
+  const [expiryDuration, setExpiryDuration] = useState(86400);
+
 
   const navigate = useNavigate();
   const tagsHandler = (e) => {
@@ -28,7 +30,7 @@ export const ChatRoomForm = () => {
     await axios
       .post(
         `${VITE_BASE_URL}/chatrooms/create`,
-        { name: roomName, tags: tags, icon:icon },
+        { name: roomName, tags: tags, icon: icon, expiryDuration: expiryDuration  },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,8 +66,12 @@ export const ChatRoomForm = () => {
   };
   return (
     <div className="flex flex-col justify-center items-center h-screen w-screen">
+      <Link to="/home" className="flex gap-2 items-center md:text-xl text-white absolute top-8 left-8">
+        <ArrowBigLeft/>
+        Back
+      </Link>
       {addTag ? (
-        <div className="h-[30vh] w-[30vw] border-2 border-accent rounded-lg flex flex-col justify-center items-center gap-12">
+        <div className="h-[30vh] w-[60vw] md:w-[30vw] border-2 border-accent rounded-lg flex flex-col justify-center items-center gap-12 p-4">
           <input
             name="newTag"
             onChange={(e) => {
@@ -73,21 +79,32 @@ export const ChatRoomForm = () => {
               text.length > 5 ? setTag(text.slice(0, 5) + "...") : setTag(text);
             }}
             placeholder="Add Tag"
-            className="input-field !w-[15vw]"
+            className="w-full input-field"
           />
-          <button
-            onClick={addTagHandler}
-            className="cursor-pointer bg-[#161b21] hover:bg-[var(--color-hover-bg)] !text-gray-300 px-8 py-2 rounded-lg"
-          >
-            Add
-          </button>
+          <div className="flex justify-between gap-4">
+            <button
+              onClick={addTagHandler}
+              className="w-full cursor-pointer bg-[#161b21] hover:bg-[var(--color-hover-bg)] !text-gray-300 px-2 md:px-8 py-2 rounded-lg"
+            >
+              Add
+            </button>
+            <button
+              onClick={(e) => {
+                setAddTag((prev) => !prev);
+              }}
+              className="w-full cursor-pointer bg-[#161b21] hover:bg-[var(--color-hover-bg)] !text-gray-300 px-2 md:px-8 py-2 rounded-lg"
+            >
+              Cancel
+            </button>
+
+          </div>
         </div>
       ) : (
-        <>
+        <div className="w-full flex flex-col justify-center items-center px-8">
           <div className="text-4xl text-white font-[VT323] uppercase pb-1">
             Birth a Shadow Society
           </div>
-          <form className="h-[40vh] w-[30vw] border-2 border-accent rounded-lg flex flex-col justify-center items-center max-md:w-[60vw] max-lg:w-[50vw]">
+          <form className="h-[50vh] w-full md:w-[30vw] border-2 border-accent rounded-lg flex flex-col justify-center items-center ">
             <div className="flex-col justify-center items-center w-full text-center">
               <input
                 value={roomName}
@@ -99,6 +116,23 @@ export const ChatRoomForm = () => {
                 name="newGroup"
                 placeholder="Name the shadow"
               />
+              <div className="mt-4 flex flex-col items-center w-full">
+                <label className="text-gray-300 mb-2">Room Duration</label>
+                <select
+                  value={expiryDuration}
+                  onChange={(e) => setExpiryDuration(Number(e.target.value))}
+                  className="input-field !w-2/3"
+                >
+                  <option value={60}>1 Minutes</option>
+                  <option value={1800}>30 Minutes</option>
+                  <option value={3600}>1 Hour</option>
+                  <option value={7200}>2 Hours</option>
+                  <option value={21600}>6 Hours</option>
+                  <option value={86400}>24 Hours</option>
+                  <option value={604800}>7 Days</option>
+                </select>
+              </div>
+
               <button
                 onClick={addRoomHandler}
                 className="testing !w-2/3 top-0 !mt-8 rounded-lg"
@@ -131,7 +165,7 @@ export const ChatRoomForm = () => {
                 </label>
               ) : (
                 <>
-                <img className="w-10 h-10 rounded-full" src={icon} alt="Icon" />
+                  <img className="w-10 h-10 rounded-full" src={icon} alt="Icon" />
                   <button
                     className="w-10 h-10 rounded full text-black"
                     onClick={(e) => {
@@ -156,7 +190,7 @@ export const ChatRoomForm = () => {
               ))}
             </div>
           </form>
-        </>
+        </div>
       )}
     </div>
   );
